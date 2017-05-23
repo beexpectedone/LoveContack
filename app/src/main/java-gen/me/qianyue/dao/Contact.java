@@ -9,9 +9,11 @@ public class Contact {
     private Long id;
     /** Not-null value. */
     private String name;
-    private int number;
+    private double number;
+    private Double numbertwo;
     /** Not-null value. */
     private String photoPath;
+    private java.util.Date date;
 
     public Contact() {
     }
@@ -20,11 +22,13 @@ public class Contact {
         this.id = id;
     }
 
-    public Contact(Long id, String name, int number, String photoPath) {
+    public Contact(Long id, String name, double number, Double numbertwo, String photoPath, java.util.Date date) {
         this.id = id;
         this.name = name;
         this.number = number;
+        this.numbertwo = numbertwo;
         this.photoPath = photoPath;
+        this.date = date;
     }
 
     public Long getId() {
@@ -45,12 +49,20 @@ public class Contact {
         this.name = name;
     }
 
-    public int getNumber() {
+    public double getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(double number) {
         this.number = number;
+    }
+
+    public Double getNumbertwo() {
+        return numbertwo;
+    }
+
+    public void setNumbertwo(Double numbertwo) {
+        this.numbertwo = numbertwo;
     }
 
     /** Not-null value. */
@@ -61,6 +73,14 @@ public class Contact {
     /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setPhotoPath(String photoPath) {
         this.photoPath = photoPath;
+    }
+
+    public java.util.Date getDate() {
+        return date;
+    }
+
+    public void setDate(java.util.Date date) {
+        this.date = date;
     }
 
 }

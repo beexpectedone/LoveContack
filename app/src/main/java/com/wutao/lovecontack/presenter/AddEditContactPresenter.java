@@ -8,6 +8,8 @@ import com.wutao.lovecontack.model.ContactBean;
 import com.wutao.lovecontack.model.source.ContactDataSource;
 import com.wutao.lovecontack.model.source.ContactsRepository;
 
+import me.qianyue.dao.ContactDao;
+
 /**
  * Created by mingyue on 2017/5/21.
  */
@@ -33,16 +35,25 @@ public class AddEditContactPresenter implements AddEditContactContract.Presenter
 
 
     @Override
-    public void createContact(String name, int number, String photoPath) {
-        ContactBean newContactBean = new ContactBean(name,number,photoPath);
+    public void createContact(ContactDao contactDao,ContactBean contactBean) {
+        ContactBean newContactBean = new ContactBean(contactBean.getName(),contactBean.getNumber(),contactBean.getPhotoPath(),contactBean.getNumber2());
         if(newContactBean.isEmpty()){
             mAddContactView.showEmptyContactError();
         }else {
-            mContactsRepository.saveContact(newContactBean);
+            mContactsRepository.saveContact(contactDao,newContactBean);
             mAddContactView.showContactsList();
         }
-
     }
+
+    @Override
+    public void saveContact(ContactDao contactDao, ContactBean contactBean) {
+        if(isNewContact()){ //如果是新建的联系人就执行create方法
+            createContact(contactDao,contactBean);
+        }else {
+
+        }
+    }
+
 
     @Override
     public void start() {
@@ -56,6 +67,10 @@ public class AddEditContactPresenter implements AddEditContactContract.Presenter
             throw new RuntimeException("populateTask() was called but task is new.");
         }
         mContactsRepository.getContact(mTaskId,this);
+    }
+
+    private boolean isNewContact() {
+        return mTaskId == null;
     }
 
     @Override

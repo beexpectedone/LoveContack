@@ -4,6 +4,8 @@ import com.wutao.lovecontack.base.BasePresenter;
 import com.wutao.lovecontack.base.BaseView;
 import com.wutao.lovecontack.model.ContactBean;
 
+import me.qianyue.dao.ContactDao;
+
 /**
  * Created by mingyue on 2017/5/21.
  */
@@ -24,9 +26,12 @@ public interface AddEditContactContract {
 
         void showContactsList();
 
+        void setLoadingIndicator(boolean active);
+
     }
 
     interface Presenter extends BasePresenter{
-        void createContact(String name,int number,String photoPath);
+        void createContact(ContactDao contactDao, ContactBean contactBean);
+        void saveContact(ContactDao contactDao,ContactBean contactBean);
     }
 }

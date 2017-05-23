@@ -40,7 +40,7 @@ public class BitmapUtils {
         return inSampleSize;
     }
     /**
-     * 根据路径获得突破并压缩返回bitmap用于显示
+     * 根据路径获得图片并压缩返回bitmap用于显示
      *
      * @param filePath
      * @return

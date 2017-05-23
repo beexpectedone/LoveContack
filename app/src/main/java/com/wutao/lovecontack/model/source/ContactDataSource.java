@@ -6,6 +6,8 @@ import com.wutao.lovecontack.model.ContactBean;
 
 import java.util.List;
 
+import me.qianyue.dao.ContactDao;
+
 /**
  * Created by mingyue on 2017/5/21.
  */
@@ -30,7 +32,7 @@ public interface ContactDataSource {
 
     void getContact(@NonNull String taskId, @NonNull GetContactCallback callback);
 
-    void saveContact(@NonNull ContactBean contactBean);
+    void saveContact(ContactDao contactDao, @NonNull ContactBean contactBean);
 
 
 }

@@ -25,8 +25,10 @@ public class ContactDao extends AbstractDao<Contact, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Name = new Property(1, String.class, "name", false, "NAME");
-        public final static Property Number = new Property(2, int.class, "number", false, "NUMBER");
-        public final static Property PhotoPath = new Property(3, String.class, "photoPath", false, "PHOTO_PATH");
+        public final static Property Number = new Property(2, double.class, "number", false, "NUMBER");
+        public final static Property Numbertwo = new Property(3, Double.class, "numbertwo", false, "NUMBERTWO");
+        public final static Property PhotoPath = new Property(4, String.class, "photoPath", false, "PHOTO_PATH");
+        public final static Property Date = new Property(5, java.util.Date.class, "date", false, "DATE");
     };
 
 
@@ -42,10 +44,12 @@ public class ContactDao extends AbstractDao<Contact, Long> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'CONTACT' (" + //
-                "'_id' INTEGER PRIMARY KEY ," + // 0: id
+                "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "'NAME' TEXT NOT NULL ," + // 1: name
-                "'NUMBER' INTEGER NOT NULL ," + // 2: number
-                "'PHOTO_PATH' TEXT NOT NULL );"); // 3: photoPath
+                "'NUMBER' REAL NOT NULL ," + // 2: number
+                "'NUMBERTWO' REAL," + // 3: numbertwo
+                "'PHOTO_PATH' TEXT NOT NULL ," + // 4: photoPath
+                "'DATE' INTEGER);"); // 5: date
     }
 
     /** Drops the underlying database table. */
@@ -64,8 +68,18 @@ public class ContactDao extends AbstractDao<Contact, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getName());
-        stmt.bindLong(3, entity.getNumber());
-        stmt.bindString(4, entity.getPhotoPath());
+        stmt.bindDouble(3, entity.getNumber());
+ 
+        Double numbertwo = entity.getNumbertwo();
+        if (numbertwo != null) {
+            stmt.bindDouble(4, numbertwo);
+        }
+        stmt.bindString(5, entity.getPhotoPath());
+ 
+        java.util.Date date = entity.getDate();
+        if (date != null) {
+            stmt.bindLong(6, date.getTime());
+        }
     }
 
     /** @inheritdoc */
@@ -80,8 +94,10 @@ public class ContactDao extends AbstractDao<Contact, Long> {
         Contact entity = new Contact( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // name
-            cursor.getInt(offset + 2), // number
-            cursor.getString(offset + 3) // photoPath
+            cursor.getDouble(offset + 2), // number
+            cursor.isNull(offset + 3) ? null : cursor.getDouble(offset + 3), // numbertwo
+            cursor.getString(offset + 4), // photoPath
+            cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)) // date
         );
         return entity;
     }
@@ -91,8 +107,10 @@ public class ContactDao extends AbstractDao<Contact, Long> {
     public void readEntity(Cursor cursor, Contact entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setName(cursor.getString(offset + 1));
-        entity.setNumber(cursor.getInt(offset + 2));
-        entity.setPhotoPath(cursor.getString(offset + 3));
+        entity.setNumber(cursor.getDouble(offset + 2));
+        entity.setNumbertwo(cursor.isNull(offset + 3) ? null : cursor.getDouble(offset + 3));
+        entity.setPhotoPath(cursor.getString(offset + 4));
+        entity.setDate(cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)));
      }
     
     /** @inheritdoc */
