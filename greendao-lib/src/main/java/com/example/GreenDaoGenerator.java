@@ -10,7 +10,7 @@ public class GreenDaoGenerator {
         //首先，创建一个用于添加实体（Entity）的模式（Schema）对象。
         //两个参数分别代表：数据库版本号与自动生成代码的包路径
 
-        Schema schema = new Schema(2, "me.qianyue.dao");
+        Schema schema = new Schema(3, "me.qianyue.dao");
 
         //shiyong Schema对象，添加实体（Entities）
         addContact(schema);
@@ -28,7 +28,7 @@ public class GreenDaoGenerator {
         contact.addIdProperty().primaryKey().autoincrement();//
 
         contact.addStringProperty("name").notNull(); //联系人姓名
-        contact.addDoubleProperty("number").notNull(); //联系人电话
+        contact.addStringProperty("number").notNull(); //联系人电话
         contact.addDoubleProperty("numbertwo");// 联系人第二个电话
         contact.addStringProperty("photoPath").notNull();
         contact.addDateProperty("date");

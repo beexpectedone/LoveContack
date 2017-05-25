@@ -24,4 +24,17 @@ public class CommonUtils {
         }
         return flag;
     }
+
+    /**
+     * 获取到特定的字符串
+     * @param string
+     * @return
+     */
+    public static String getFormedString(String string) {
+        String regEx = "[^0-9]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(string);
+        string = m.replaceAll("").toString();
+        return string;
+    }
 }

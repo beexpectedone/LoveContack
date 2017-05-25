@@ -12,9 +12,14 @@ import android.widget.FrameLayout;
 
 import com.wutao.lovecontack.R;
 import com.wutao.lovecontack.Utils.ActivityUtils;
+import com.wutao.lovecontack.application.LoveApplication;
+import com.wutao.lovecontack.model.source.ContactsRepository;
+import com.wutao.lovecontack.presenter.ContactPresenter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.qianyue.dao.ContactDao;
+import me.qianyue.dao.DaoSession;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener{
 
@@ -28,6 +33,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     CoordinatorLayout rootViewCL;
     @BindView(R.id.contentFrame)
     FrameLayout contentFrame;
+    private ContactDao contactDao;
 
 
     @Override
@@ -46,8 +52,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),contackListFragment,R.id.contentFrame);
         }
+        initDao();
+        new ContactPresenter(contackListFragment,new ContactsRepository(),contactDao);
+    }
 
-
+    /**
+     获取到数据库的到文件
+     */
+    private void initDao() {
+        DaoSession daoSession = LoveApplication.mApplication.getDaoSession();
+        contactDao = daoSession.getContactDao();
     }
 
     @Override

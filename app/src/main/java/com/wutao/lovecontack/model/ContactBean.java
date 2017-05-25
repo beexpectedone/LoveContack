@@ -6,7 +6,9 @@ package com.wutao.lovecontack.model;
 
 public class ContactBean {
 
-    public ContactBean(String name, double number, String photoPath,double number2){
+    public ContactBean(){}
+
+    public ContactBean(String name, String number, String photoPath,double number2){
         this.name = name;
         this.number = number;
         this.number2 = number2 == 0? 0: number2;
@@ -14,7 +16,7 @@ public class ContactBean {
     }
 
     private String name;
-    private double number;
+    private String number;
     private double number2;
     private String photoPath;
 
@@ -34,11 +36,11 @@ public class ContactBean {
         this.photoPath = photoPath;
     }
 
-    public double getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 
@@ -46,12 +48,12 @@ public class ContactBean {
         return number2;
     }
 
-    public void setNumber2(int number2) {
+    public void setNumber2(double number2) {
         this.number2 = number2;
     }
 
     public boolean isEmpty() {
         return (name == null || "".equals(name)) ||
-                (photoPath == null || "".equals(photoPath)) || number == 0 && number2 == 0;
+                (photoPath == null || "".equals(photoPath)) || (photoPath == null || "".equals(photoPath));
     }
 }

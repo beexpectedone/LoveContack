@@ -1,14 +1,20 @@
 package com.wutao.lovecontack.view;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,17 +24,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.wutao.lovecontack.R;
 import com.wutao.lovecontack.Utils.BitmapUtils;
 import com.wutao.lovecontack.Utils.CommonUtils;
-import com.wutao.lovecontack.Utils.DataBaseUtils;
-import com.wutao.lovecontack.Utils.FileUtils;
+import com.wutao.lovecontack.Utils.ContactsUtils;
 import com.wutao.lovecontack.Utils.ToastUtils;
 import com.wutao.lovecontack.application.LoveApplication;
 import com.wutao.lovecontack.contract.AddEditContactContract;
 import com.wutao.lovecontack.model.ContactBean;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.qianyue.dao.ContactDao;
@@ -46,8 +49,8 @@ public class AddEditNewContactFragment extends Fragment implements AddEditContac
     LinearLayout rootViewLV;
     @BindView(R.id.addContactNumET)
     EditText addContactNumET;
-    @BindView(R.id.addContactNum2ET)
-    EditText addContactNum2ET;
+//    @BindView(R.id.addContactNum2ET)
+//    EditText addContactNum2ET;
     @BindView(R.id.selectTV)
     TextView selectTV;
     @BindView(R.id.contactIM)
@@ -59,6 +62,8 @@ public class AddEditNewContactFragment extends Fragment implements AddEditContac
 
     public static final String ARGUMENT_EDIT_TASK_ID = "EDIT_TASK_ID";
     public final static int REQUEST_IMAGE = 2;
+    private final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0xb1;
+    private final int REQUESTCODE_READ_CONTACTS = 0xb2;
 
     private String mPhotoPath = "";
 
@@ -70,6 +75,7 @@ public class AddEditNewContactFragment extends Fragment implements AddEditContac
     private ContactDao contactDao;
     private String mNumber2;
     private String contactPath = "";
+    private Bitmap bitmap;
 
     public static AddEditNewContactFragment newInstance(){
         return new AddEditNewContactFragment();
@@ -147,7 +153,7 @@ public class AddEditNewContactFragment extends Fragment implements AddEditContac
 
     @Override
     public void showEmptyContactError() {
-
+        ToastUtils.showShortSnackbar(rootViewLV,"保存失败请重试！");
     }
 
     @Override
@@ -195,14 +201,13 @@ public class AddEditNewContactFragment extends Fragment implements AddEditContac
                         ToastUtils.showLongSnackbar(rootViewLV,"号码不能为空");
                         return;
                     }
-                    double numberInt = Double.parseDouble(mNumber);
 
-                    mNumber2 = addContactNum2ET.getText().toString().trim();
-                    if(TextUtils.isEmpty(mNumber2)){
-                        ToastUtils.showLongSnackbar(rootViewLV,"号码2不能为空");
-                        return;
-                    }
-                    double number2Int = Double.parseDouble(mNumber2);
+//                    mNumber2 = addContactNum2ET.getText().toString().trim();
+//                    if(TextUtils.isEmpty(mNumber2)){
+//                        ToastUtils.showLongSnackbar(rootViewLV,"号码2不能为空");
+//                        return;
+//                    }
+//                    double number2Dou = Double.parseDouble(mNumber2);
 
                     mName = addContactNameET.getText().toString().trim();
                     if(TextUtils.isEmpty(mName)){
@@ -214,20 +219,28 @@ public class AddEditNewContactFragment extends Fragment implements AddEditContac
                         return;
                     }
                     /**这里要有获取到Image图片路径的操作*/
-
+                    if(null == bitmap){
+                        ToastUtils.showShortSnackbar(rootViewLV,"图片有误");
+                        return;
+                    }
                     if(TextUtils.isEmpty(mPhotoPath)){
+                        ToastUtils.showShortSnackbar(rootViewLV,"获取图片失败");
                         return;
                     }
-
-                    FileUtils.writeImageFromSytem(mName);
-                    ContactBean contactBean = new ContactBean(mName,numberInt,contactPath,number2Int);
-
-                    if(DataBaseUtils.search(contactDao,contactBean)){
-                        ToastUtils.showLongSnackbar(rootViewLV,"联系人已存在");
-                        return;
+                    AddEditNewContactActivity mAct = (AddEditNewContactActivity) getActivity();
+                    if(null != mAct){
+                        mAddContactPresenter.saveContact(contactDao,mPhotoPath,mName,mNumber,0,mAct);
                     }
-
-                    mAddContactPresenter.saveContact(contactDao,contactBean);
+                }
+                break;
+            case R.id.selectTV:
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_CONTACTS},
+                            MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                } else {
+                    startActivityForResult(new Intent(
+                            Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUESTCODE_READ_CONTACTS);
                 }
                 break;
         }
@@ -240,12 +253,34 @@ public class AddEditNewContactFragment extends Fragment implements AddEditContac
             Uri uriImg = data.getData();
             if (null != uriImg){
                 mPhotoPath = BitmapUtils.getRealPathFromURI(uriImg,getContext());
-                Bitmap bitmap = BitmapUtils.getSmallBitmap(BitmapUtils.getRealPathFromURI(uriImg,getContext()),480,800);
+                bitmap = BitmapUtils.getSmallBitmap(BitmapUtils.getRealPathFromURI(uriImg,getContext()),480,800);
                 if (null != bitmap){
                     contactIM.setImageBitmap(bitmap);
                 }
             }
+        }else if(requestCode == REQUESTCODE_READ_CONTACTS){
+            ContactsUtils.getContactFromContacts(addContactNameET,addContactNumET,data,getActivity());
+        }
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+                if (null != grantResults && grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startActivityForResult(new Intent(
+                            Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUESTCODE_READ_CONTACTS);
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(null != bitmap){
+            bitmap.recycle();
         }
     }
 }

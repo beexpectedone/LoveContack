@@ -1,5 +1,6 @@
 package com.wutao.lovecontack.presenter;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -35,20 +36,20 @@ public class AddEditContactPresenter implements AddEditContactContract.Presenter
 
 
     @Override
-    public void createContact(ContactDao contactDao,ContactBean contactBean) {
-        ContactBean newContactBean = new ContactBean(contactBean.getName(),contactBean.getNumber(),contactBean.getPhotoPath(),contactBean.getNumber2());
+    public void createContact(ContactDao contactDao, String photoPath, String name, String number1, double number2, Activity context) {
+        ContactBean newContactBean = new ContactBean(name,number1,photoPath,number2);
         if(newContactBean.isEmpty()){
             mAddContactView.showEmptyContactError();
         }else {
-            mContactsRepository.saveContact(contactDao,newContactBean);
-            mAddContactView.showContactsList();
+            mContactsRepository.saveContact(contactDao, photoPath, name, number1, number2, context);
+//            mAddContactView.showContactsList();
         }
     }
 
     @Override
-    public void saveContact(ContactDao contactDao, ContactBean contactBean) {
+    public void saveContact(ContactDao contactDao, String photoPath, String name, String number1, double number2, Activity context) {
         if(isNewContact()){ //如果是新建的联系人就执行create方法
-            createContact(contactDao,contactBean);
+            createContact(contactDao, photoPath, name, number1, number2, context);
         }else {
 
         }

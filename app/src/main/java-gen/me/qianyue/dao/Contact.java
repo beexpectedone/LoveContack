@@ -9,7 +9,8 @@ public class Contact {
     private Long id;
     /** Not-null value. */
     private String name;
-    private double number;
+    /** Not-null value. */
+    private String number;
     private Double numbertwo;
     /** Not-null value. */
     private String photoPath;
@@ -22,7 +23,7 @@ public class Contact {
         this.id = id;
     }
 
-    public Contact(Long id, String name, double number, Double numbertwo, String photoPath, java.util.Date date) {
+    public Contact(Long id, String name, String number, Double numbertwo, String photoPath, java.util.Date date) {
         this.id = id;
         this.name = name;
         this.number = number;
@@ -49,11 +50,13 @@ public class Contact {
         this.name = name;
     }
 
-    public double getNumber() {
+    /** Not-null value. */
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(double number) {
+    /** Not-null value; ensure this value is available before it is saved to the database. */
+    public void setNumber(String number) {
         this.number = number;
     }
 

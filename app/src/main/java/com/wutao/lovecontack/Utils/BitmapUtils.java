@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import java.io.ByteArrayOutputStream;
+
 /**
  * Created by mingyue on 2017/5/22.
  */
@@ -75,5 +77,18 @@ public class BitmapUtils {
             cursor.close();
         }
         return result;
+    }
+
+    /**
+     * 图片压缩方法
+     *
+     * @param bitmap 图片文件
+     * @return 压缩后的字节流
+     * @throws Exception
+     */
+    public static ByteArrayOutputStream compress(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);// 质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        return baos;
     }
 }

@@ -1,12 +1,14 @@
 package com.wutao.lovecontack.model.source;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 
+import com.wutao.lovecontack.Utils.DataBaseUtils;
+import com.wutao.lovecontack.function.SaveDataService;
 import com.wutao.lovecontack.model.ContactBean;
 
-import java.util.Date;
+import java.util.List;
 
-import me.qianyue.dao.Contact;
 import me.qianyue.dao.ContactDao;
 
 /**
@@ -36,10 +38,19 @@ public class ContactsRepository implements ContactDataSource{
 
 
     @Override
-    public void getContactsList(@NonNull LoadContactsCallback callback) {
+    public void getContactsList(@NonNull final ContactDao contactDao, @NonNull final LoadContactsCallback callback) {
         /**这里做具体的获取数据库中数据的操作*/
-
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+               List<ContactBean> contactBeanList =  DataBaseUtils.search(contactDao);
+                if(null!= contactBeanList){
+                    callback.onContactsLoaded(contactBeanList);
+                }else {
+                    callback.onDataNotAvailable();
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -48,18 +59,9 @@ public class ContactsRepository implements ContactDataSource{
     }
 
     @Override
-    public void saveContact(@NonNull ContactDao contactDao, @NonNull ContactBean contactBean) {
-        /**这里做具体的保存联系人的操作*/
-//        mContactLocalSource.saveContact(contactBean);
-        Date date = new Date();
-        Contact contact = new Contact();
-        contact.setName(contactBean.getName());
-        contact.setDate(date);
-        contact.setPhotoPath(contactBean.getPhotoPath());
-        contact.setNumber(contactBean.getNumber());
-        contact.setNumbertwo(contactBean.getNumber2());
-        contactDao.insert(contact);
+    public void saveContact(@NonNull ContactDao contactDao, String photoPath, String name, String number1, double number2,@NonNull Activity context) {
+        SaveDataService saveDataService = new SaveDataService(contactDao,photoPath,name,number1,number2,context);
+        saveDataService.start();
     }
-
 
 }

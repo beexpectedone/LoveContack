@@ -1,5 +1,6 @@
 package com.wutao.lovecontack.model.source;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 
 import com.wutao.lovecontack.model.ContactBean;
@@ -28,11 +29,11 @@ public interface ContactDataSource {
 
 
 
-    void getContactsList(@NonNull LoadContactsCallback callback);
+    void getContactsList(@NonNull ContactDao contactDao, @NonNull LoadContactsCallback callback);
 
     void getContact(@NonNull String taskId, @NonNull GetContactCallback callback);
 
-    void saveContact(ContactDao contactDao, @NonNull ContactBean contactBean);
+    void saveContact(@NonNull ContactDao contactDao, String photoPath, String name, String number1, double number2,@NonNull Activity context);
 
 
 }

@@ -15,7 +15,7 @@ public interface ContactContract {
     /**
      *  所有view中的方法在该类中进行统一管理
      */
-    interface View extends BaseView<BasePresenter>{
+    interface View extends BaseView<Presenter>{
 
         void setLoadingIndicator(boolean active);//设置 加载的小圆圈
         void showLoadingTasksError();
