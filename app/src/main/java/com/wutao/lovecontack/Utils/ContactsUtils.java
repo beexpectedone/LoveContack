@@ -28,6 +28,7 @@ public class ContactsUtils {
         if (!cursor.moveToFirst()) {
             return;
         }
+
         String userName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
         String contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
         Cursor phone = reContentResolverol.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,

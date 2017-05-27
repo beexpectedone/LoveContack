@@ -75,8 +75,6 @@ public class SaveDataService extends Thread {
 //                mAddContactPresenter.saveContact(contactDao,contactBean);
                 }
             }
-
         }
-
     }
 }

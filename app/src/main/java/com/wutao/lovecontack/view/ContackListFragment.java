@@ -12,8 +12,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +25,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.wutao.lovecontack.R;
-import com.wutao.lovecontack.auto.view.DividerGridItemDecoration;
 import com.wutao.lovecontack.contract.ContactContract;
 import com.wutao.lovecontack.model.ContactBean;
 
@@ -59,7 +59,6 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
         @Override
         public void onContactItemClick(ContactBean contactBean) {
             mNum = contactBean.getNumber();
-//            Intent intent=new Intent("android.intent.action.CALL", Uri.parse("tel:"+num));
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE},
@@ -68,6 +67,12 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
                 startActivity(new Intent(
                         Intent.ACTION_CALL, Uri.parse("tel:"+ mNum)));
             }
+        }
+
+        @Override
+        public void oncontactItemLongClick(ContactBean contactBean) {
+            /**这里实现删除item的操作*/
+
         }
     };
     private ContactsAdapter mListAdapter;
@@ -90,7 +95,7 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mListAdapter = new ContactsAdapter(mItemListener);
+        mListAdapter = new ContactsAdapter(mItemListener,mData);
     }
 
     @Nullable
@@ -98,9 +103,10 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_contact_list,null);
         ButterKnife.bind(this,root);
-        mListAdapter = new ContactsAdapter(mItemListener);
-        contactsRV.setLayoutManager(new GridLayoutManager(mAct,2));
-        contactsRV.addItemDecoration(new DividerGridItemDecoration(mAct));
+//        contactsRV.setLayoutManager(new GridLayoutManager(mAct,2));
+//        contactsRV.addItemDecoration(new DividerGridItemDecoration(mAct));
+        contactsRV.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));//设置RecyclerView布局管理器为2列垂直排布
+        contactsRV.setItemAnimator(new DefaultItemAnimator());
         contactsRV.setAdapter(mListAdapter);
         return root;
     }
@@ -178,9 +184,11 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
     private  class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyHolder>{
 
         private ContactItemListener mListener;
+        private List<ContactBean> mData;
 
-        public ContactsAdapter(ContactItemListener listener){
+        public ContactsAdapter(ContactItemListener listener,List<ContactBean> mData){
             this.mListener = listener;
+            this.mData = mData;
         }
 
         @Override
@@ -190,6 +198,9 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
 
         @Override
         public void onBindViewHolder(MyHolder holder, int position) {
+//            ViewGroup.LayoutParams params =  holder.itemView.getLayoutParams();//得到item的LayoutParams布局参数
+//            params.height = heights.get(position);//把随机的高度赋予item布局
+//            holder.itemView.setLayoutParams(params);//把params设置给item布局
             final ContactBean contactBean = mData.get(position);
             if(null != contactBean){
                 String name = mData.get(position).getName();
@@ -235,6 +246,7 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
 
     public interface ContactItemListener{
         void onContactItemClick(ContactBean contactBean);
+        void oncontactItemLongClick(ContactBean contactBean);
     }
 
     @Override

@@ -1,11 +1,13 @@
 package com.wutao.lovecontack.view;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
@@ -246,6 +248,7 @@ public class AddEditNewContactFragment extends Fragment implements AddEditContac
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE) {
@@ -253,13 +256,15 @@ public class AddEditNewContactFragment extends Fragment implements AddEditContac
             Uri uriImg = data.getData();
             if (null != uriImg){
                 mPhotoPath = BitmapUtils.getRealPathFromURI(uriImg,getContext());
-                bitmap = BitmapUtils.getSmallBitmap(BitmapUtils.getRealPathFromURI(uriImg,getContext()),480,800);
+                bitmap = BitmapUtils.getSmallBitmap(mPhotoPath,480,800);
                 if (null != bitmap){
                     contactIM.setImageBitmap(bitmap);
                 }
             }
         }else if(requestCode == REQUESTCODE_READ_CONTACTS){
-            ContactsUtils.getContactFromContacts(addContactNameET,addContactNumET,data,getActivity());
+            if(null != data){
+                ContactsUtils.getContactFromContacts(addContactNameET,addContactNumET,data,getActivity());
+            }
         }
     }
 

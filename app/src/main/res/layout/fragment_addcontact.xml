@@ -28,7 +28,7 @@
 
                 <EditText
                     android:id="@+id/addContactNameET"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="输入联系人姓名"
                     android:layout_marginLeft="20dp"
@@ -53,19 +53,6 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:text="号码"/>
-
-                <EditText
-                    android:id="@+id/addContactNumET"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="输入联系人号码"
-                    android:layout_marginLeft="20dp"
-                    android:inputType="phone"
-                    android:maxLength="11"
-                    android:layout_centerVertical="true"
-                    android:singleLine="true"
-                    android:background="@null"
-                    android:layout_toRightOf="@id/mTitle2" />
                 <TextView
                     android:id="@+id/selectTV"
                     android:layout_width="wrap_content"
@@ -73,8 +60,22 @@
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
                     android:text="通讯录选取"
-                    android:textSize="20sp"
-                    />
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/addContactNumET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="输入联系人号码"
+                    android:layout_marginLeft="20dp"
+                    android:inputType="phone"
+                    android:maxLength="11"
+                    android:layout_toLeftOf="@id/selectTV"
+                    android:layout_centerVertical="true"
+                    android:singleLine="true"
+                    android:background="@null"
+                    android:layout_toRightOf="@id/mTitle2" />
+
             </RelativeLayout>
 
             <!--<RelativeLayout-->
