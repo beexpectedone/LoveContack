@@ -3,8 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.wutao.lovecontack.view.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_big"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/action_big_image"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_normal"
+        android:orderInCategory="100"
+        android:title="@string/action_normal_image"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_small"
+        android:orderInCategory="100"
+        android:title="@string/action_smal_image"
         app:showAsAction="never" />
 </menu>

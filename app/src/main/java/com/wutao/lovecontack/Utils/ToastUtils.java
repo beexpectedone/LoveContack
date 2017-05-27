@@ -1,8 +1,10 @@
 package com.wutao.lovecontack.Utils;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
@@ -56,5 +58,23 @@ public class ToastUtils {
     public static void showLongSnackbar(View view, String content){
         Snackbar.make(view,content, Snackbar.LENGTH_LONG)
                 .show();
+    }
+
+    public static void dismissDialog(final Activity mAct, final ProgressDialog mDialog,
+                                     final String message, final boolean needFinishContext){
+        mAct.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(null!= mDialog && mDialog.isShowing()){
+                    mDialog.dismiss();
+                }
+                if(!TextUtils.isEmpty(message)){
+                    ToastUtils.showShortToast(mAct,message);
+                }
+                if(needFinishContext){
+                    mAct.finish();
+                }
+            }
+        });
     }
 }

@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,8 +16,14 @@ import android.widget.FrameLayout;
 import com.wutao.lovecontack.R;
 import com.wutao.lovecontack.Utils.ActivityUtils;
 import com.wutao.lovecontack.application.LoveApplication;
+import com.wutao.lovecontack.auto.view.DividerGridItemDecoration;
+import com.wutao.lovecontack.auto.view.adapter.ContactItemListener;
+import com.wutao.lovecontack.auto.view.adapter.ContactsAdapter;
+import com.wutao.lovecontack.model.ContactBean;
 import com.wutao.lovecontack.model.source.ContactsRepository;
 import com.wutao.lovecontack.presenter.ContactPresenter;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -81,12 +90,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        ContackListFragment contackListFragment = (ContackListFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        if(null != contackListFragment) {
+            List<ContactBean> mData = contackListFragment.getmData();
+            RecyclerView mRecycleView = contackListFragment.getContactsRV();
+            ContactItemListener mItemListener = contackListFragment.getmItemListener();
+            ContactsAdapter mListAdapter = new ContactsAdapter(this,mItemListener,mData,1000,1000);
+            switch (id){
+                case R.id.action_big:
+                    mRecycleView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
+                    mRecycleView.addItemDecoration(new DividerGridItemDecoration(this));
+                    mRecycleView.setAdapter(mListAdapter);
+                break;
+                case R.id.action_normal:
+                    mListAdapter = new ContactsAdapter(this,mItemListener,mData,500,500);
+                    mRecycleView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+                    mRecycleView.setItemAnimator(new DefaultItemAnimator());
+                    mRecycleView.setAdapter(mListAdapter);
+                    break;
+                case R.id.action_small:
+                    mListAdapter = new ContactsAdapter(this,mItemListener,mData,200,200);
+                    mRecycleView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+                    mRecycleView.setItemAnimator(new DefaultItemAnimator());
+                    mRecycleView.setAdapter(mListAdapter);
+                    break;
+            }
         }
-
         return super.onOptionsItemSelected(item);
     }
 

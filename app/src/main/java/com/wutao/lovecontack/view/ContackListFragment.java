@@ -12,9 +12,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +24,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.wutao.lovecontack.R;
+import com.wutao.lovecontack.auto.view.DividerGridItemDecoration;
+import com.wutao.lovecontack.auto.view.adapter.ContactItemListener;
 import com.wutao.lovecontack.contract.ContactContract;
 import com.wutao.lovecontack.model.ContactBean;
 
@@ -95,7 +96,6 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mListAdapter = new ContactsAdapter(mItemListener,mData);
     }
 
     @Nullable
@@ -103,10 +103,11 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_contact_list,null);
         ButterKnife.bind(this,root);
-//        contactsRV.setLayoutManager(new GridLayoutManager(mAct,2));
-//        contactsRV.addItemDecoration(new DividerGridItemDecoration(mAct));
-        contactsRV.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));//设置RecyclerView布局管理器为2列垂直排布
-        contactsRV.setItemAnimator(new DefaultItemAnimator());
+        mListAdapter = new ContactsAdapter(mItemListener,mData,500,500);
+        contactsRV.setLayoutManager(new GridLayoutManager(mAct,2));
+        contactsRV.addItemDecoration(new DividerGridItemDecoration(mAct));
+//        contactsRV.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));//设置RecyclerView布局管理器为2列垂直排布
+//        contactsRV.setItemAnimator(new DefaultItemAnimator());
         contactsRV.setAdapter(mListAdapter);
         return root;
     }
@@ -185,10 +186,14 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
 
         private ContactItemListener mListener;
         private List<ContactBean> mData;
+        private int sizeWidth;
+        private int sizeHeight;
 
-        public ContactsAdapter(ContactItemListener listener,List<ContactBean> mData){
+        public ContactsAdapter(ContactItemListener listener,List<ContactBean> mData,int sizeWidth,int sizeHeight){
             this.mListener = listener;
             this.mData = mData;
+            this.sizeWidth =sizeWidth;
+            this.sizeHeight = sizeHeight;
         }
 
         @Override
@@ -198,9 +203,6 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
 
         @Override
         public void onBindViewHolder(MyHolder holder, int position) {
-//            ViewGroup.LayoutParams params =  holder.itemView.getLayoutParams();//得到item的LayoutParams布局参数
-//            params.height = heights.get(position);//把随机的高度赋予item布局
-//            holder.itemView.setLayoutParams(params);//把params设置给item布局
             final ContactBean contactBean = mData.get(position);
             if(null != contactBean){
                 String name = mData.get(position).getName();
@@ -211,7 +213,7 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
                 if(!TextUtils.isEmpty(photoPath)){
                     Picasso.with(mAct)
                             .load(new File(photoPath))
-                            .resize(400, 400)
+                            .resize(sizeWidth, sizeHeight)
                             .centerCrop()
                             .into(holder.itemIV);
                 }
@@ -244,10 +246,10 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
         }
     }
 
-    public interface ContactItemListener{
-        void onContactItemClick(ContactBean contactBean);
-        void oncontactItemLongClick(ContactBean contactBean);
-    }
+//    public interface ContactItemListener{
+//        void onContactItemClick(ContactBean contactBean);
+//        void oncontactItemLongClick(ContactBean contactBean);
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -259,5 +261,17 @@ public class ContackListFragment extends Fragment implements ContactContract.Vie
                 }
                 break;
         }
+    }
+
+    public RecyclerView getContactsRV() {
+        return contactsRV;
+    }
+
+    public List<ContactBean> getmData() {
+        return mData;
+    }
+
+    public ContactItemListener getmItemListener() {
+        return mItemListener;
     }
 }
