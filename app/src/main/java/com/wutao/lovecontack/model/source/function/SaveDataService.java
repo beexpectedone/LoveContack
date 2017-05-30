@@ -1,4 +1,4 @@
-package com.wutao.lovecontack.function;
+package com.wutao.lovecontack.model.source.function;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -16,6 +16,8 @@ import me.qianyue.dao.ContactDao;
 
 /**
  * Created by qianyue.wang on 2017/5/24.
+ *
+ * 添加联系人第一种方法：直接在后台开启一条线程，缺点是优先级较低容易被杀死。
  */
 
 public class SaveDataService extends Thread {

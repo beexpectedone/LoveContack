@@ -34,7 +34,7 @@ public class ToastUtils {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
-    public static void showShortToastOnUIThrea(final Activity context, final String message){
+    public static void showShortToastOnUIThread(final Activity context, final String message){
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {

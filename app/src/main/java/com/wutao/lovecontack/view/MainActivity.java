@@ -85,10 +85,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+    public boolean onOptionsItemSelected(MenuItem item) {/**fragment部分的业务逻辑不应该写到activity当中*/
         int id = item.getItemId();
         ContackListFragment contackListFragment = (ContackListFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if(null != contackListFragment) {

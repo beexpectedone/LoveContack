@@ -33,9 +33,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyHold
     public ContactsAdapter(Activity mAct,ContactItemListener listener,List<ContactBean> mData,int sizeWidth,int sizeHeight){
         this.mAct = mAct;
         this.mListener = listener;
-        this.mData = mData;
+        setData(mData);
         this.sizeWidth =sizeWidth;
         this.sizeHeight = sizeHeight;
+    }
+
+    public void setData(List<ContactBean> mList){
+        mData = mList;
     }
 
     @Override
@@ -86,5 +90,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyHold
             item_LL = (LinearLayout) itemView.findViewById(R.id.itemLL);
         }
     }
+
+
 }
 

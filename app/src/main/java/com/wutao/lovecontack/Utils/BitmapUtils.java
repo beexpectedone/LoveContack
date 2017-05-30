@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
+import android.text.TextUtils;
 
 import java.io.ByteArrayOutputStream;
 
@@ -71,22 +72,27 @@ public class BitmapUtils {
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static String getRealPathFromURI(Uri contentURI, Context context) {
-        String result;
+        String result = "";
         Cursor cursor = context.getContentResolver().query(contentURI, null, null, null, null);
         if (cursor == null) {
             // Source is Dropbox or other similar local file path
             result = contentURI.getPath();
         } else {
-//            cursor.moveToFirst();
-//            String[] filePathColumn = { MediaStore.Images.Media.DATA };
-//            cursor = context.getContentResolver().query(contentURI,filePathColumn, null, null, null);
-////            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//            int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
-//            result = cursor.getString(columnIndex);
-//            if (TextUtils.isEmpty(result)){ //华为、vivo、OPPO手机需要调用该方法，而且华为的6.0及以上版本需要手动开启存储权限
+            cursor.moveToFirst();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentURI,filePathColumn, null, null, null);
+            try {
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                result = cursor.getString(columnIndex);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            if (TextUtils.isEmpty(result)){ //华为、vivo、OPPO手机需要调用该方法，而且华为的6.0及以上版本需要手动开启存储权限
                 result = getPath(context,contentURI);
-//            }
-//            cursor.close();
+            }
+            if(null != cursor){
+                cursor.close();
+            }
         }
         return result;
     }
