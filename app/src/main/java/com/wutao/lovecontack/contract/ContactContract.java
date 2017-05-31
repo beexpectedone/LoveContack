@@ -1,10 +1,15 @@
 package com.wutao.lovecontack.contract;
 
+import android.app.Activity;
+import android.support.annotation.NonNull;
+
 import com.wutao.lovecontack.base.BasePresenter;
 import com.wutao.lovecontack.base.BaseView;
 import com.wutao.lovecontack.model.ContactBean;
 
 import java.util.List;
+
+import me.qianyue.dao.ContactDao;
 
 /**
  * Created by mingyue on 2017/5/21.
@@ -23,11 +28,14 @@ public interface ContactContract {
         void showContacts(List<ContactBean> contactBeanList);
         void showNoContacts();
         void showAddNewContact();
-
+        void deleteContact(ContactDao contactDao,ContactBean contactBean);
+        void ifDeleteSuccess(ContactBean contactBean);
+        void deleteFailure();
     }
 
 
     interface Presenter extends BasePresenter{
         void addNewContact();
+        void deleteContact(@NonNull ContactDao contactDao, ContactBean contactBean,@NonNull Activity context);
     }
 }

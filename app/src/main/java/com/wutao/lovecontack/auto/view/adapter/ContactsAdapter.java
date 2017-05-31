@@ -17,6 +17,8 @@ import com.wutao.lovecontack.model.ContactBean;
 import java.io.File;
 import java.util.List;
 
+import me.qianyue.dao.ContactDao;
+
 
 /**
  * Created by qianyue.wang on 2017/5/27.
@@ -27,13 +29,15 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyHold
     private Activity mAct;
     private ContactItemListener mListener;
     private List<ContactBean> mData;
+    private ContactDao mContactDao;
     private int sizeWidth;
     private int sizeHeight;
 
-    public ContactsAdapter(Activity mAct,ContactItemListener listener,List<ContactBean> mData,int sizeWidth,int sizeHeight){
+    public ContactsAdapter(Activity mAct, ContactItemListener listener, List<ContactBean> mData, ContactDao contactDao,int sizeWidth, int sizeHeight){
         this.mAct = mAct;
         this.mListener = listener;
         setData(mData);
+        this.mContactDao = contactDao;
         this.sizeWidth =sizeWidth;
         this.sizeHeight = sizeHeight;
     }
@@ -63,10 +67,18 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyHold
                         .centerCrop()
                         .into(holder.itemIV);
             }
-            holder.item_LL.setOnClickListener(new View.OnClickListener() {
+            holder.item_LL.setOnClickListener(new View.OnClickListener() {/**拨打电话功能*/
                 @Override
                 public void onClick(View v) {
                     mListener.onContactItemClick(contactBean);
+                }
+            });
+
+            holder.item_LL.setOnLongClickListener(new View.OnLongClickListener() {/** 长按删除 */
+                @Override
+                public boolean onLongClick(View v) {
+                    mListener.oncontactItemLongClick(mContactDao,contactBean);
+                    return false;
                 }
             });
         }

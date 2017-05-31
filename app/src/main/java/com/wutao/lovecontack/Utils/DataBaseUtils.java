@@ -29,7 +29,7 @@ public class DataBaseUtils {
         Query query = contactDao.queryBuilder()
                 .where(ContactDao.Properties.Name.eq(contactBean.getName()))
                 .build();
-        List<ContactBean> contactBeenList = query.list();
+        List<Contact> contactBeenList = query.list();
         if(null != contactBeenList && contactBeenList.size() > 0){
             return true;
         }
@@ -72,5 +72,14 @@ public class DataBaseUtils {
         contactDao.insert(contact);
     }
 
+
+    public static void delete(ContactDao contactDao, ContactBean contactBean){
+        List<Contact> contactList = contactDao.queryBuilder()
+                .where(ContactDao.Properties.Name.eq(contactBean.getName()))
+                .list();
+        if(null != contactList && contactList.size() > 0){
+            contactDao.delete(contactList.get(0));
+        }
+    }
 
 }

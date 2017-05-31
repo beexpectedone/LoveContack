@@ -1,5 +1,6 @@
 package com.wutao.lovecontack.presenter;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -22,13 +23,15 @@ public class ContactPresenter implements ContactContract.Presenter {
 
     private boolean mFirstLoad = true;
     private ContactDao mContactDao;
+    private Activity mAct;
 
     public ContactPresenter(@Nullable ContactContract.View contactView, ContactDataSource mContactRepository,
-                            @Nullable ContactDao mContactDao){
+                            @Nullable ContactDao mContactDao,Activity activity){
 
         this.mContactView = contactView;
         this.mContactRepository = mContactRepository;
         this.mContactDao = mContactDao;
+        this.mAct = activity;
         mContactView.setPresenter(this);
     }
 
@@ -36,11 +39,11 @@ public class ContactPresenter implements ContactContract.Presenter {
 
     @Override
     public void start() {
-        loadContacts(mContactDao,false);
+        loadContacts(mContactDao,false,mAct);
     }
 
-    public void loadContacts(@NonNull ContactDao contactDao,boolean forceUpdate){
-        loadTasks(contactDao,forceUpdate || mFirstLoad, true);
+    public void loadContacts(@NonNull ContactDao contactDao,boolean forceUpdate,@NonNull Activity context){
+        loadTasks(contactDao,forceUpdate || mFirstLoad, true,context);
         mFirstLoad = false;
     }
 
@@ -49,7 +52,7 @@ public class ContactPresenter implements ContactContract.Presenter {
      * @param forceUpdate
      * @param showLoadingUI
      */
-    private void loadTasks(@NonNull ContactDao contactDao, boolean forceUpdate, final boolean showLoadingUI) {
+    private void loadTasks(@NonNull ContactDao contactDao, boolean forceUpdate, final boolean showLoadingUI,@NonNull Activity context) {
         if(showLoadingUI){
             mContactView.setLoadingIndicator(true);
         }
@@ -77,7 +80,7 @@ public class ContactPresenter implements ContactContract.Presenter {
                 }
                 mContactView.showLoadingTasksError();
             }
-        });
+        },context);
     }
 
     private void processContacts(List<ContactBean> contactsToShow) {
@@ -97,4 +100,22 @@ public class ContactPresenter implements ContactContract.Presenter {
     public void addNewContact() {
 
     }
+
+    @Override
+    public void deleteContact(@NonNull ContactDao contactDao, final ContactBean contactBean,@NonNull Activity context) {
+        mContactRepository.deleteContact(contactDao, contactBean, new ContactDataSource.DeleteState() {
+            @Override
+            public void deleteSuccess() {
+                /** 调用刷新页面方法 */
+                mContactView.ifDeleteSuccess(contactBean);
+            }
+
+            @Override
+            public void deleteFailure() {
+                mContactView.deleteFailure();
+            }
+        },context);
+    }
+
+
 }
