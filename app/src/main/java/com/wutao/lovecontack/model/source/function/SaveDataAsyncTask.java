@@ -20,7 +20,6 @@ import me.qianyue.dao.ContactDao;
 
 public class SaveDataAsyncTask extends AsyncTask<ContactBean, Object,Object> {
 
-
     private ProgressDialogHandler mHandler;
     private Activity mAct;
     private ContactDao mContactDao;
@@ -30,7 +29,7 @@ public class SaveDataAsyncTask extends AsyncTask<ContactBean, Object,Object> {
     public SaveDataAsyncTask(ContactDao contactDao, String photoPath,ProgressDialogHandler handler,Activity act){
         this.mContactDao = contactDao;
         this.mPhotoPath = photoPath; //这里的photoPath是图片原先存储在手机中的路径
-        this.mHandler = handler;
+        this.mHandler = handler; //主线程的handler
         this.mAct = act;
     }
 

@@ -40,30 +40,28 @@ public class SaveDataHandlerThread extends HandlerThread{
     public static final int MSG_CONTACT_LIST_INFO = 0x113;
     private ContactDataSource.LoadContactsCallback mCallback;
 
-    public SaveDataHandlerThread(String name, ContactDao contactDao, String photoPath, Activity act,
-                                 ContactBean contactBean,ProgressDialogHandler handler) {
+    public SaveDataHandlerThread(String name, ContactDao contactDao,ContactBean contactBean,ProgressDialogHandler handler){
         super(name);
         this.mContactDao = contactDao;
-        this.mPhotoPath = photoPath;
-        this.mAct = act;
         this.mContactBean = contactBean;
         this.mHandler = handler;
+    }
+
+    public SaveDataHandlerThread(String name, ContactDao contactDao, String photoPath, Activity act,
+                                 ContactBean contactBean,ProgressDialogHandler handler) {
+        this(name,contactDao,contactBean,handler);
+        this.mAct = act;
+        this.mPhotoPath = photoPath;
     }
 
     public SaveDataHandlerThread(String name, ContactDao contactDao, ContactBean contactBean, ProgressDialogHandler handler, ContactDataSource.DeleteState deleteState){
-        super(name);
-        this.mContactDao = contactDao;
-        this.mContactBean = contactBean;
+        this(name,contactDao,contactBean,handler);
         this.mDeleteState = deleteState;
-        this.mHandler = handler;
     }
 
     public SaveDataHandlerThread(String name, ContactDao contactDao, ProgressDialogHandler handler, ContactDataSource.LoadContactsCallback callback){
-        super(name);
-        this.mContactDao = contactDao;
-
+        this(name,contactDao,null,handler);
         this.mCallback = callback;
-        this.mHandler = handler;
     }
 
 
@@ -92,7 +90,7 @@ public class SaveDataHandlerThread extends HandlerThread{
         }else {
             mCallback.onDataNotAvailable();
         }
-        mHandler.sendEmptyMessage(DISMISS_PROGRESS_DIALOG);
+        mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,2000);
     }
 
     private void deleteData() {
@@ -104,7 +102,7 @@ public class SaveDataHandlerThread extends HandlerThread{
             }else {
                 mDeleteState.deleteFailure();
             }
-            mHandler.sendEmptyMessage(DISMISS_PROGRESS_DIALOG);
+            mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,2000);
         }
     }
 
@@ -116,12 +114,12 @@ public class SaveDataHandlerThread extends HandlerThread{
                     String contactPath = LoveApplication.mApplication.getSdDir() + File.separator + mContactBean.getName() + ".jpg"; //设置图片文件存储路径
                     if(DataBaseUtils.search(mContactDao,mContactBean)){
                         ToastUtils.showShortToastOnUIThread(mAct,"联系人已存在");
-                        mHandler.sendEmptyMessage(DISMISS_PROGRESS_DIALOG);
+                        mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,2000);
                         return ;
                     }
                     DataBaseUtils.insert(mContactDao,contactPath,mContactBean.getName(),mContactBean.getNumber(),mContactBean.getNumber2(),mAct);
                     ToastUtils.showShortToastOnUIThread(mAct,"插入数据成功");
-                    mHandler.sendEmptyMessage(DISMISS_PROGRESS_DIALOG);
+                    mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,2000);
                     mAct.finish();
                 }
             }

@@ -122,18 +122,18 @@ public class ContackListFragment extends BaseFragment implements ContactContract
         if (getView() == null) {
             return;
         }
-        mAct.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mDialog = new ProgressDialog(mAct);
-                mDialog.show();
-            }
-        });
+//        mAct.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                mDialog = new ProgressDialog(mAct);
+//                mDialog.show();
+//            }
+//        });
     }
 
     @Override/***/
     public void showLoadingTasksError() {
-
+        ToastUtils.showShortToastOnUIThread(mAct,"数据加载错误，请稍后再试！");
     }
 
     @Override/***/
@@ -143,7 +143,7 @@ public class ContackListFragment extends BaseFragment implements ContactContract
 
     @Override/** 在这里面调用adapter的notify数据方法*/
     public void showContacts(final List<ContactBean> contactBeanList) {
-        mAct.runOnUiThread(new Runnable() {
+        contactsRV.post(new Runnable() {
             @Override
             public void run() {
                 if(null != mDialog && mDialog.isShowing()){
@@ -165,7 +165,7 @@ public class ContackListFragment extends BaseFragment implements ContactContract
 
     @Override/***/
     public void showNoContacts() {
-        mAct.runOnUiThread(new Runnable() {
+        contactsRV.post(new Runnable() {
             @Override
             public void run() {
                 if(null != mDialog && mDialog.isShowing()){
@@ -189,7 +189,7 @@ public class ContackListFragment extends BaseFragment implements ContactContract
 
     @Override
     public void ifDeleteSuccess(final ContactBean contactBean){
-        mAct.runOnUiThread(new Runnable() {
+        contactsRV.post(new Runnable() {
             @Override
             public void run() {
                 ToastUtils.showShortToast(mAct,"删除成功！");

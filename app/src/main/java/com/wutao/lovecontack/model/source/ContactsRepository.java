@@ -3,9 +3,10 @@ package com.wutao.lovecontack.model.source;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 
+import com.wutao.lovecontack.Utils.ThreadManager;
 import com.wutao.lovecontack.model.ContactBean;
 import com.wutao.lovecontack.model.source.function.SaveDataHandlerThread;
-import com.wutao.lovecontack.model.source.function.SaveDataService;
+import com.wutao.lovecontack.model.source.function.SaveDataThreadPool;
 import com.wutao.lovecontack.view.AddEditNewContactActivity;
 import com.wutao.lovecontack.view.MainActivity;
 
@@ -55,8 +56,12 @@ public class ContactsRepository implements ContactDataSource{
     public void saveContact(@NonNull ContactDao contactDao, String photoPath, String name, String number1, double number2,@NonNull Activity context) {
 
         /** 单独开启一条线程进行存储 */
-        SaveDataService saveDataService = new SaveDataService(contactDao,photoPath,name,number1,number2,context,((AddEditNewContactActivity)context).mHandler);
-        saveDataService.start();
+//        SaveDataThread saveDataThread = new SaveDataThread(contactDao,photoPath,name,number1,number2,context,((AddEditNewContactActivity)context).mHandler);
+//        saveDataThread.start();
+
+        /** 使用 线程池 的方式存储数据 */
+        SaveDataThreadPool saveDataThreadPool = new SaveDataThreadPool(contactDao,photoPath,name,number1,number2,context,((AddEditNewContactActivity)context).mHandler);
+        ThreadManager.getShortPool().execute(saveDataThreadPool);
 
         String currentThread = Thread.currentThread().getName();
         /** 使用 Asynctask 类存储信息 */
@@ -67,11 +72,13 @@ public class ContactsRepository implements ContactDataSource{
         /** 使用 HandlerThread 进行存储 */
 //        ((AddEditNewContactActivity)context).mHandler = new ProgressDialogHandler(contactDao,photoPath,context,new ContactBean(name,number1,photoPath,number2));
 //        ((AddEditNewContactActivity)context).mHandler.sendEmptyMessage(ProgressDialogHandler.INSERT_DATA);
-        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handler_thread",contactDao,photoPath,context,
-                new ContactBean(name,number1,photoPath,number2),((AddEditNewContactActivity)context).mHandler);
-        saveDataHandlerThread.start();
-        saveDataHandlerThread.getLooper();
-        saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_SAVE_INFO);
+//        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handler_thread",contactDao,photoPath,context,
+//                new ContactBean(name,number1,photoPath,number2),((AddEditNewContactActivity)context).mHandler);
+//        saveDataHandlerThread.start();
+//        saveDataHandlerThread.getLooper();
+//        saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_SAVE_INFO);
+
+
     }
 
     @Override

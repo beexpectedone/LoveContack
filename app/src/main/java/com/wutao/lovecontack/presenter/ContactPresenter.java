@@ -53,6 +53,7 @@ public class ContactPresenter implements ContactContract.Presenter {
      * @param showLoadingUI
      */
     private void loadTasks(@NonNull ContactDao contactDao, boolean forceUpdate, final boolean showLoadingUI,@NonNull Activity context) {
+
         if(showLoadingUI){
             mContactView.setLoadingIndicator(true);
         }
