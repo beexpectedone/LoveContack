@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.wutao.lovecontack.Utils.DataBaseUtils;
 import com.wutao.lovecontack.Utils.FileUtils;
+import com.wutao.lovecontack.Utils.ToastUtils;
 import com.wutao.lovecontack.application.LoveApplication;
 import com.wutao.lovecontack.model.ContactBean;
 
@@ -47,11 +48,12 @@ public class SaveDataThreadPool implements Runnable {
                     String contactPath = LoveApplication.mApplication.getSdDir() + File.separator + mName + ".jpg"; //设置图片文件存储路径
                     ContactBean contactBean = new ContactBean(mName,mNumber1,contactPath,mNumber2);
                     if(DataBaseUtils.search(mContactDao,contactBean)){
-                        mHandler.sendEmptyMessageDelayed(ProgressDialogHandler.DISMISS_PROGRESS_DIALOG,2000);
+                        mHandler.sendEmptyMessageDelayed(ProgressDialogHandler.DISMISS_PROGRESS_DIALOG,1000);
+                        ToastUtils.showShortToastOnUIThread(mAct,"联系人已存在！");
                         return;
                     }
                     DataBaseUtils.insert(mContactDao,mPhotoPath,mName,mNumber1,mNumber2,mAct);
-                    mHandler.sendEmptyMessageDelayed(ProgressDialogHandler.DISMISS_PROGRESS_DIALOG,2000);
+                    mHandler.sendEmptyMessageDelayed(ProgressDialogHandler.DISMISS_PROGRESS_DIALOG,1000);
                     mAct.finish();
                 }
             }

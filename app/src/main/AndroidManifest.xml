@@ -3,8 +3,8 @@
     package="com.wutao.lovecontack">
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- 读取手机通讯录 -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- 拨打电话 -->

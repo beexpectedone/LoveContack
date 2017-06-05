@@ -21,7 +21,8 @@ public class ContactsUtils {
         if (contactData == null) {
             return;
         }
-        Cursor cursor = context.managedQuery(contactData, null, null, null, null);
+//        Cursor cursor = context.managedQuery(contactData, null, null, null, null);
+        Cursor cursor =context.getContentResolver().query(contactData,null,null,null,null);
         if (cursor == null) {
             return;
         }

@@ -19,7 +19,7 @@ public class ProgressDialogHandler extends Handler {
     public static final int DISMISS_PROGRESS_DIALOG = 2;//
     public static final int INSERT_DATA = 3; //
 
-    private ProgressDialog mDialog;
+    public ProgressDialog mDialog;
     private Activity mAct;
     private ContactDao mContactDao;
     private String mPhotoPath;

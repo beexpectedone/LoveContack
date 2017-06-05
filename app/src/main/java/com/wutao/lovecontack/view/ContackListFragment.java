@@ -46,6 +46,8 @@ public class ContackListFragment extends BaseFragment implements ContactContract
     private ProgressDialog mDialog;
     private final int MY_PERMISSIONS_REQUEST_CALL = 0xb1;
     private final int REQUESTCODE_CALL = 0xb2;
+    private final int REQUESTCODE_READ_EXTERNAL = 0xb3;
+    private final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL = 0xb4;
     public static final String BIG_IMAGE = "big_image";
     public static final String NORMAL_IMAGE = "normal_image";
     public static final String SMALL_IMAGE = "small_image";
@@ -114,7 +116,13 @@ public class ContackListFragment extends BaseFragment implements ContactContract
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.start();
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL);
+        }else {
+            mPresenter.start();
+        }
     }
 
     @Override/***/
@@ -226,6 +234,12 @@ public class ContackListFragment extends BaseFragment implements ContactContract
                 if (null != grantResults && grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+ mNum)));
+                }
+                break;
+            case REQUESTCODE_READ_EXTERNAL:
+                if (null != grantResults && grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mPresenter.start();
                 }
                 break;
         }

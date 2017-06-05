@@ -49,10 +49,7 @@ public class AddEditNewContactActivity extends BaseActivity {
                     addEditNewContactFragment, R.id.contentFrame);
 
         }
-
         new AddEditContactPresenter(taskId, new ContactsRepository(), addEditNewContactFragment);
-
-
     }
 
     @Override
