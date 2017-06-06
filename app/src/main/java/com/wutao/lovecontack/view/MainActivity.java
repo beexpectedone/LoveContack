@@ -3,7 +3,6 @@ package com.wutao.lovecontack.view;
 import android.content.Intent;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,8 +20,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     public static final String EXTRA_ACTIVITY_ID = "ACTIVITY_ID";
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
+//    @BindView(R.id.toolbar)
+//    Toolbar toolbar;
     @BindView(R.id.fab)
     FloatingActionButton fab;
     @BindView(R.id.rootViewCL)

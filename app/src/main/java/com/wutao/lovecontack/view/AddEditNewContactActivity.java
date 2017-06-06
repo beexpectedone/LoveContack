@@ -1,7 +1,6 @@
 package com.wutao.lovecontack.view;
 
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 
 import com.wutao.lovecontack.R;
 import com.wutao.lovecontack.Utils.ActivityUtils;
@@ -15,20 +14,18 @@ import com.wutao.lovecontack.presenter.AddEditContactPresenter;
 public class AddEditNewContactActivity extends BaseActivity {
 //
 //    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-
-
+//    Toolbar toolbar;
     public static final int REQUEST_ADD_TASK = 1;
-
 
     @Override
     protected void initView() {
 //        ButterKnife.bind(this);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //        ActionBar actionBar = getSupportActionBar();
 //        actionBar.setDisplayHomeAsUpEnabled(true);
 //        actionBar.setDisplayShowHomeEnabled(true);
+        toolbar.setTitle("新建联系人");
 
         String taskId = null;
         AddEditNewContactFragment addEditNewContactFragment = (AddEditNewContactFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);;

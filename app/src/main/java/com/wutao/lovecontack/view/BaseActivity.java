@@ -1,9 +1,17 @@
 package com.wutao.lovecontack.view;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 
+import com.wutao.lovecontack.R;
 import com.wutao.lovecontack.model.source.function.ProgressDialogHandler;
 
 /**
@@ -13,16 +21,46 @@ import com.wutao.lovecontack.model.source.function.ProgressDialogHandler;
 public abstract class BaseActivity extends AppCompatActivity {
 
     public ProgressDialogHandler mHandler;
+    public Toolbar toolbar;
+    private LinearLayout root_layout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //调用父类的方法
+        super.setContentView(R.layout.activity_base); //这里是具体的activity实现类调用，即调用BaseActivity中的这行代码
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){ //如果API版本大于19
+            WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
+            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
+        }
+        initToolbar();
         mHandler = new ProgressDialogHandler(this);
         
         setContentView(getLayoutId());
         
         initView();
+    }
+
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        setContentView(View.inflate(this,layoutResID,null));
+    }
+
+    @Override
+    public void setContentView(View view) {
+        root_layout = (LinearLayout) findViewById(R.id.root_layout);
+        if(null == root_layout){
+            return;
+        }
+        root_layout.addView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        initToolbar();
+    }
+
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if(null != toolbar){
+            setSupportActionBar(toolbar);
+        }
     }
 
     protected abstract void initView();
