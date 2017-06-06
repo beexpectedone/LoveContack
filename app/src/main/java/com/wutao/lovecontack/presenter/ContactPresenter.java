@@ -58,6 +58,10 @@ public class ContactPresenter implements ContactContract.Presenter {
             mContactView.setLoadingIndicator(true);
         }
 
+        if (forceUpdate) {
+            mContactRepository.refreshContacts();
+        }
+
         /**调用M层的方法获取本地数据库当中的方法*/
         mContactRepository.getContactsList(contactDao,new ContactDataSource.LoadContactsCallback() {
             @Override

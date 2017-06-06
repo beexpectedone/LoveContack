@@ -45,4 +45,6 @@ public interface ContactDataSource {
     void deleteAllContacts();
 
     void saveTemplate(ContactBean contactBean);
+
+    void refreshContacts();
 }

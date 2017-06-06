@@ -246,7 +246,7 @@ public class AddEditNewContactFragment extends BaseFragment implements AddEditCo
                 }
             }
         } else if (requestCode == REQUESTCODE_READ_CONTACTS) {
-            if (null != data) {
+            if (null != data) { //测试魅族系统在这里会存在问题
                 ContactsUtils.getContactFromContacts(addContactNameET, addContactNumET, data, getActivity());
             }
         }

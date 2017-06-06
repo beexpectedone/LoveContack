@@ -46,8 +46,4 @@ public class LoadingBar implements IloadingBar{
             }
         }
     }
-
-
-
-
 }
