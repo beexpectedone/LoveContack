@@ -2,8 +2,11 @@
 
     <!-- 在超过19的版本中时候 NoActionBar 这个主题 -->
     <style name="AppTheme.NoActionBar">
+        <!-- 无ActionBar -->
         <item name="windowActionBar">false</item>
+        <!-- 没有标题栏 -->
         <item name="windowNoTitle">true</item>
+        <!-- 状态栏为透明 -->
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 </resources>

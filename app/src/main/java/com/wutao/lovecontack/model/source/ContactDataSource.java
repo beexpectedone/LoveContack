@@ -42,4 +42,7 @@ public interface ContactDataSource {
 
     void deleteContact(@NonNull ContactDao contactDao,@NonNull ContactBean contactBean, @NonNull DeleteState deleteState,@NonNull Activity context);
 
+    void deleteAllContacts();
+
+    void saveTemplate(ContactBean contactBean);
 }

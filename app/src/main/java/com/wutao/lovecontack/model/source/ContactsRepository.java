@@ -10,6 +10,11 @@ import com.wutao.lovecontack.model.source.function.SaveDataThreadPool;
 import com.wutao.lovecontack.view.AddEditNewContactActivity;
 import com.wutao.lovecontack.view.MainActivity;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import me.qianyue.dao.ContactDao;
 
 /**
@@ -21,30 +26,111 @@ public class ContactsRepository implements ContactDataSource{
 
     private static ContactsRepository INSTANCE = null;
 
-//    private final ContactDataSource mContactLocalSource;
+    private final ContactDataSource mContactDataBaseSource;
 
-//    public ContactsRepository(ContactDataSource mContactLocalSource) {
-//        this.mContactLocalSource = mContactLocalSource;
-//    }
-//
-//
-//    public static ContactsRepository getInstance(ContactDataSource contactLocalDataSource){
-//        if (null == INSTANCE){
-//            INSTANCE = new ContactsRepository(contactLocalDataSource);
-//        }
-//        return INSTANCE;
-//    }
+    private final ContactDataSource mContactMemorySource;
 
-    public ContactsRepository(){}
+    /**
+     * 存储在内存中的 缓存数据， 如果数据没有改变取这里的数据就好了
+     */
+    Map<String, ContactBean> mCachedContacts;
+
+    /**
+     * 判断数据是否已经改变
+     */
+    boolean dataChanged = false;
+
+    private ContactsRepository(@NonNull ContactDataSource contactMemorySource,@NonNull  ContactDataSource contactDataBaseSource) {
+        mContactMemorySource = contactMemorySource;
+        mContactDataBaseSource = contactDataBaseSource;
+    }
+
+
+    public static ContactsRepository getInstance(ContactDataSource contactMemorySource,ContactDataSource contactDataBaseSource){
+        if (null == INSTANCE){
+            INSTANCE = new ContactsRepository(contactMemorySource,contactDataBaseSource);
+        }
+        return INSTANCE;
+    }
+
+    public static void destroyInstance(){
+        INSTANCE = null;
+    }
+
+    public ContactsRepository(){
+        mContactDataBaseSource = null;
+        mContactMemorySource = null;
+    }
 
 
     @Override
-    public void getContactsList(@NonNull final ContactDao contactDao, @NonNull final LoadContactsCallback callback,@NonNull Activity context) {
-        /**这里做具体的获取数据库中数据的操作*/
-        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handle_thread",contactDao,((MainActivity)context).mHandler,callback);
+    public void getContactsList(@NonNull final ContactDao contactDao, @NonNull final LoadContactsCallback callback,@NonNull final Activity context) {
+
+        if(null != mCachedContacts && !dataChanged){ //数据没改变，从缓存中读取数据就可以
+            callback.onContactsLoaded(new ArrayList<>(mCachedContacts.values()));
+            return;
+        }
+
+        if(dataChanged){ //如果数据源已经改变，那么就需要从数据库中重新获取到数据
+            /**这里做具体的获取数据库中数据的操作*/
+            getContactsFromDataBaseDataSource(contactDao, callback, (MainActivity) context);
+        }else {
+
+            mContactMemorySource.getContactsList(contactDao,new LoadContactsCallback() {
+                @Override
+                public void onContactsLoaded(List<ContactBean> contacts) {
+                    refreshCache(contacts);
+                    callback.onContactsLoaded(new ArrayList<>(mCachedContacts.values()));
+                }
+
+                @Override
+                public void onDataNotAvailable() {
+                    getContactsList(contactDao,callback,context);
+                }
+            },context);
+        }
+
+    }
+
+    private void getContactsFromDataBaseDataSource(@NonNull ContactDao contactDao, @NonNull final LoadContactsCallback callback, @NonNull MainActivity context) {
+
+        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handle_thread",contactDao, context.mHandler,callback);
         saveDataHandlerThread.start();
         saveDataHandlerThread.getLooper();
         saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_CONTACT_LIST_INFO);
+
+        mContactDataBaseSource.getContactsList(contactDao,new LoadContactsCallback() {
+            @Override
+            public void onContactsLoaded(List<ContactBean> contacts) {
+                refreshCache(contacts);
+                refreshMemoryDataSource(contacts);
+                callback.onContactsLoaded(new ArrayList<>(mCachedContacts.values()));
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                callback.onDataNotAvailable();
+            }
+        },context);
+    }
+
+    private void refreshMemoryDataSource(List<ContactBean> contacts) {
+        mContactMemorySource.deleteAllContacts();
+        for(ContactBean contact : contacts){
+            mContactMemorySource.saveTemplate(contact);
+        }
+    }
+
+    private void refreshCache(List<ContactBean> contacts) {
+        if(null == mCachedContacts){
+            mCachedContacts = new LinkedHashMap<>();
+        }
+        mCachedContacts.clear();
+        for (ContactBean contact : contacts){
+            mCachedContacts.put(contact.getName(),contact);
+        }
+
+        dataChanged = false;
     }
 
     @Override
@@ -77,8 +163,6 @@ public class ContactsRepository implements ContactDataSource{
 //        saveDataHandlerThread.start();
 //        saveDataHandlerThread.getLooper();
 //        saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_SAVE_INFO);
-
-
     }
 
     @Override
@@ -89,5 +173,28 @@ public class ContactsRepository implements ContactDataSource{
         saveDataHandlerThread.getLooper();
         saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_DELETE_INFO);
     }
+
+    @Override
+    public void deleteAllContacts() {
+        mContactMemorySource.deleteAllContacts();
+        mContactDataBaseSource.deleteAllContacts();
+        if(null == mCachedContacts){
+            mCachedContacts = new LinkedHashMap<>();
+        }
+        mCachedContacts.clear();
+    }
+
+    @Override
+    public void saveTemplate(ContactBean contactBean) {
+        mContactMemorySource.saveTemplate(contactBean);
+        mContactDataBaseSource.saveTemplate(contactBean);
+
+        if(null == mCachedContacts){
+            mCachedContacts = new LinkedHashMap<>();
+        }
+        mCachedContacts.put(contactBean.getName(),contactBean);
+    }
+
+
 
 }

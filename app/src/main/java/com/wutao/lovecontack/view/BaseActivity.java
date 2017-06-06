@@ -41,10 +41,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         initView();
     }
 
+    //Set the activity content from a layout resource.
+    // The resource will beinflated, adding all top-level views to the activity.
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
-        setContentView(View.inflate(this,layoutResID,null));
+        setContentView(View.inflate(this,layoutResID,null));  //源码当中说“形成这个方法调用后会”
     }
+
 
     @Override
     public void setContentView(View view) {
