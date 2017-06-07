@@ -61,16 +61,17 @@ public class ContactsRemoteDataSource implements ContactDataSource {
     }
 
     @Override
-    public void saveContact(@NonNull ContactDao contactDao, String photoPath, String name, String number1, double number2, @NonNull Activity context) {
+    public void saveContact(@NonNull ContactDao contactDao, String photoPath, String name, String number1, double number2, @NonNull Activity context, @NonNull SaveCallback saveCallback) {
         /** 使用 线程池 的方式存储数据 */
-        SaveDataThreadPool saveDataThreadPool = new SaveDataThreadPool(contactDao,photoPath,name,number1,number2,context,((AddEditNewContactActivity)context).mHandler);
+        SaveDataThreadPool saveDataThreadPool = new SaveDataThreadPool(contactDao,photoPath,name,number1,
+                number2,context,((AddEditNewContactActivity)context).mHandler, saveCallback);
         ThreadManager.getShortPool().execute(saveDataThreadPool);
     }
 
     @Override
-    public void deleteContact(@NonNull ContactDao contactDao, @NonNull ContactBean contactBean, @NonNull DeleteState deleteState, @NonNull Activity context) {
+    public void deleteContact(@NonNull ContactDao contactDao, @NonNull ContactBean contactBean, @NonNull DeleteState deleteState, @NonNull Activity context,@NonNull DeleteCallback callback) {
         /** 实现删除任务的功能 */
-        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handler_thread",contactDao,contactBean, ((MainActivity)context).mHandler,deleteState);
+        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handler_thread",contactDao,contactBean, ((MainActivity)context).mHandler,deleteState,callback);
         saveDataHandlerThread.start();
         saveDataHandlerThread.getLooper();
         saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_DELETE_INFO);

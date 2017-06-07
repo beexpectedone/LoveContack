@@ -12,7 +12,7 @@ import com.wutao.lovecontack.R;
 import com.wutao.lovecontack.Utils.ActivityUtils;
 import com.wutao.lovecontack.Utils.SharedPreferencesUtils;
 import com.wutao.lovecontack.config.ConfigValue;
-import com.wutao.lovecontack.model.source.ContactsRepository;
+import com.wutao.lovecontack.model.source.Injection;
 import com.wutao.lovecontack.presenter.ContactPresenter;
 
 import butterknife.BindView;
@@ -48,9 +48,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),contackListFragment,R.id.contentFrame);
         }
-//        new ContactPresenter(contackListFragment, Injection.provideContactsRepository(this),contackListFragment.contactDao,this);
+        new ContactPresenter(contackListFragment, Injection.provideContactsRepository(this),contackListFragment.contactDao,this);
 
-        new ContactPresenter(contackListFragment, new ContactsRepository(),contackListFragment.contactDao,this);
+//        new ContactPresenter(contackListFragment, new ContactsRepository(),contackListFragment.contactDao,this);
     }
 
     @Override

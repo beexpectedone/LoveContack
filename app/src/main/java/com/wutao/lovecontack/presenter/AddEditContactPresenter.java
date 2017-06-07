@@ -41,7 +41,17 @@ public class AddEditContactPresenter implements AddEditContactContract.Presenter
         if(newContactBean.isEmpty()){
             mAddContactView.showEmptyContactError();
         }else {
-            mContactsRepository.saveContact(contactDao, photoPath, name, number1, number2, context);
+            mContactsRepository.saveContact(contactDao, photoPath, name, number1, number2, context, new ContactDataSource.SaveCallback() {
+                @Override
+                public void saveSuccess() {
+
+                }
+
+                @Override
+                public void saveFailure() {
+
+                }
+            });
 //            mAddContactView.showContactsList();
         }
     }

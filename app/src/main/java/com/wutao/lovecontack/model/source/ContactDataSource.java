@@ -27,6 +27,17 @@ public interface ContactDataSource {
         void onDataNotAvailable();
     }
 
+
+    interface SaveCallback{
+        void saveSuccess();
+        void saveFailure();
+    }
+
+    interface DeleteCallback{
+        void deleteSuccess();
+        void deleteFailure();
+    }
+
     interface DeleteState{
         void deleteSuccess();
 
@@ -38,9 +49,9 @@ public interface ContactDataSource {
 
     void getContact(@NonNull String taskId, @NonNull GetContactCallback callback);
 
-    void saveContact(@NonNull ContactDao contactDao, String photoPath, String name, String number1, double number2,@NonNull Activity context);
+    void saveContact(@NonNull ContactDao contactDao, String photoPath, String name, String number1, double number2,@NonNull Activity context, @NonNull SaveCallback callback);
 
-    void deleteContact(@NonNull ContactDao contactDao,@NonNull ContactBean contactBean, @NonNull DeleteState deleteState,@NonNull Activity context);
+    void deleteContact(@NonNull ContactDao contactDao,@NonNull ContactBean contactBean, @NonNull DeleteState deleteState,@NonNull Activity context,@NonNull DeleteCallback callback);
 
     void deleteAllContacts();
 

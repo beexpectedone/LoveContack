@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.wutao.lovecontack.R;
 import com.wutao.lovecontack.Utils.ActivityUtils;
-import com.wutao.lovecontack.model.source.ContactsRepository;
+import com.wutao.lovecontack.model.source.Injection;
 import com.wutao.lovecontack.presenter.AddEditContactPresenter;
 
 /**
@@ -46,7 +46,7 @@ public class AddEditNewContactActivity extends BaseActivity {
                     addEditNewContactFragment, R.id.contentFrame);
 
         }
-        new AddEditContactPresenter(taskId, new ContactsRepository(), addEditNewContactFragment);
+        new AddEditContactPresenter(taskId, Injection.provideContactsRepository(this), addEditNewContactFragment);
     }
 
     @Override

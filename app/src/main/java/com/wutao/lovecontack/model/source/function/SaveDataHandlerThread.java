@@ -33,12 +33,14 @@ public class SaveDataHandlerThread extends HandlerThread{
     private ContactBean mContactBean;
     private ProgressDialogHandler mHandler;
     private ContactDataSource.DeleteState mDeleteState;
+    private ContactDataSource.SaveCallback mSaveCallback;
 
     public static final int MSG_UPDATE_INFO = 0x110;
     public static final int MSG_SAVE_INFO = 0x111; //原来大小写切换 是和图床工具冲突
     public static final int MSG_DELETE_INFO = 0x112;
     public static final int MSG_CONTACT_LIST_INFO = 0x113;
     private ContactDataSource.LoadContactsCallback mCallback;
+    private ContactDataSource.DeleteCallback mDeleteCallback;
 
     public SaveDataHandlerThread(String name, ContactDao contactDao,ContactBean contactBean,ProgressDialogHandler handler){
         super(name);
@@ -82,6 +84,11 @@ public class SaveDataHandlerThread extends HandlerThread{
         }
     };
 
+    public SaveDataHandlerThread(String handler_thread, ContactDao contactDao, ContactBean contactBean, ProgressDialogHandler mHandler, ContactDataSource.DeleteState deleteState, ContactDataSource.DeleteCallback callback) {
+        this(handler_thread,contactDao,contactBean, mHandler,deleteState);
+        this.mDeleteCallback = callback;
+    }
+
     private void getContactsList() {
         mHandler.sendEmptyMessage(SHOW_PROGRESS_DIALOG);
         List<ContactBean> contactBeanList =  DataBaseUtils.search(mContactDao);
@@ -99,8 +106,10 @@ public class SaveDataHandlerThread extends HandlerThread{
             DataBaseUtils.delete(mContactDao,mContactBean);
             if(!DataBaseUtils.search(mContactDao,mContactBean)){
                 mDeleteState.deleteSuccess();
+                mDeleteCallback.deleteSuccess();
             }else {
                 mDeleteState.deleteFailure();
+                mDeleteCallback.deleteFailure();
             }
             mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,500);
         }

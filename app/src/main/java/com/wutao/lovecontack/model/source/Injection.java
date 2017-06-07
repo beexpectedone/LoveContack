@@ -17,7 +17,7 @@ public class Injection {
 //                TasksLocalDataSource.getInstance(context));
 //    }
 
-    public static ContactsRepository provideContactsRepository(@NonNull Context context){
+    public static ContactsRepository provideContactsRepository(@NonNull Context context){ //将一个用于加载  本地数据库 的Repository对象new出来。
         return ContactsRepository.getInstance(ContactsRemoteDataSource.getInstance());
     }
 }

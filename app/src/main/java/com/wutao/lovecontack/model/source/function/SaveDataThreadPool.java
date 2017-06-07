@@ -8,6 +8,7 @@ import com.wutao.lovecontack.Utils.FileUtils;
 import com.wutao.lovecontack.Utils.ToastUtils;
 import com.wutao.lovecontack.application.LoveApplication;
 import com.wutao.lovecontack.model.ContactBean;
+import com.wutao.lovecontack.model.source.ContactDataSource;
 
 import java.io.File;
 
@@ -26,10 +27,11 @@ public class SaveDataThreadPool implements Runnable {
     private double mNumber2;
     private Activity mAct;
     private ProgressDialogHandler mHandler; //主线程的handler
+    private ContactDataSource.SaveCallback mSaveCallback;
 
     /** 构造函数传递参数 */
     public SaveDataThreadPool(ContactDao contactDao, String photoPath, String name, String number1, double number2,
-                              Activity context, ProgressDialogHandler handler){
+                              Activity context, ProgressDialogHandler handler, ContactDataSource.SaveCallback saveCallback){
         this.mContactDao = contactDao;
         this.mPhotoPath = photoPath;
         this.mName =name;
@@ -37,6 +39,7 @@ public class SaveDataThreadPool implements Runnable {
         this.mNumber2 = number2;
         this.mAct = context;
         this.mHandler = handler;
+        this.mSaveCallback = saveCallback;
     }
 
     @Override
@@ -50,10 +53,12 @@ public class SaveDataThreadPool implements Runnable {
                     if(DataBaseUtils.search(mContactDao,contactBean)){
                         mHandler.sendEmptyMessageDelayed(ProgressDialogHandler.DISMISS_PROGRESS_DIALOG,1000);
                         ToastUtils.showShortToastOnUIThread(mAct,"联系人已存在！");
+                        mSaveCallback.saveFailure();
                         return;
                     }
                     DataBaseUtils.insert(mContactDao,mPhotoPath,mName,mNumber1,mNumber2,mAct);
                     mHandler.sendEmptyMessageDelayed(ProgressDialogHandler.DISMISS_PROGRESS_DIALOG,1000);
+                    mSaveCallback.saveSuccess();
                     mAct.finish();
                 }
             }

@@ -119,7 +119,17 @@ public class ContactPresenter implements ContactContract.Presenter {
             public void deleteFailure() {
                 mContactView.deleteFailure();
             }
-        },context);
+        }, context, new ContactDataSource.DeleteCallback() {
+            @Override
+            public void deleteSuccess() {
+
+            }
+
+            @Override
+            public void deleteFailure() {
+
+            }
+        });
     }
 
 
