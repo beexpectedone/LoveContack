@@ -10,7 +10,9 @@ import android.widget.FrameLayout;
 
 import com.wutao.lovecontack.R;
 import com.wutao.lovecontack.Utils.ActivityUtils;
-import com.wutao.lovecontack.model.source.Injection;
+import com.wutao.lovecontack.Utils.SharedPreferencesUtils;
+import com.wutao.lovecontack.config.ConfigValue;
+import com.wutao.lovecontack.model.source.ContactsRepository;
 import com.wutao.lovecontack.presenter.ContactPresenter;
 
 import butterknife.BindView;
@@ -46,7 +48,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),contackListFragment,R.id.contentFrame);
         }
-        new ContactPresenter(contackListFragment, Injection.provideContactsRepository(this),contackListFragment.contactDao,this);
+//        new ContactPresenter(contackListFragment, Injection.provideContactsRepository(this),contackListFragment.contactDao,this);
+
+        new ContactPresenter(contackListFragment, new ContactsRepository(),contackListFragment.contactDao,this);
     }
 
     @Override
@@ -72,13 +76,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         if(null != contackListFragment) {
             switch (id){
                 case R.id.action_big:
-                    contackListFragment.changeView(ContackListFragment.BIG_IMAGE);
+                    contackListFragment.changeView(ConfigValue.BIG_IMAGE);
+
                 break;
                 case R.id.action_normal:
-                    contackListFragment.changeView(ContackListFragment.NORMAL_IMAGE);
+                    contackListFragment.changeView(ConfigValue.NORMAL_IMAGE);
+                    SharedPreferencesUtils.setValue(this,ConfigValue.SHOW_MODEL,ConfigValue.NORMAL_IMAGE);
                     break;
                 case R.id.action_small:
-                    contackListFragment.changeView(ContackListFragment.SMALL_IMAGE);
+                    contackListFragment.changeView(ConfigValue.SMALL_IMAGE);
+                    SharedPreferencesUtils.setValue(this,ConfigValue.SHOW_MODEL,ConfigValue.SMALL_IMAGE);
                     break;
             }
         }

@@ -90,7 +90,7 @@ public class SaveDataHandlerThread extends HandlerThread{
         }else {
             mCallback.onDataNotAvailable();
         }
-        mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,2000);
+        mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,500);
     }
 
     private void deleteData() {
@@ -102,7 +102,7 @@ public class SaveDataHandlerThread extends HandlerThread{
             }else {
                 mDeleteState.deleteFailure();
             }
-            mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,2000);
+            mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,500);
         }
     }
 
@@ -114,12 +114,12 @@ public class SaveDataHandlerThread extends HandlerThread{
                     String contactPath = LoveApplication.mApplication.getSdDir() + File.separator + mContactBean.getName() + ".jpg"; //设置图片文件存储路径
                     if(DataBaseUtils.search(mContactDao,mContactBean)){
                         ToastUtils.showShortToastOnUIThread(mAct,"联系人已存在");
-                        mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,2000);
+                        mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,1000);
                         return ;
                     }
                     DataBaseUtils.insert(mContactDao,contactPath,mContactBean.getName(),mContactBean.getNumber(),mContactBean.getNumber2(),mAct);
                     ToastUtils.showShortToastOnUIThread(mAct,"插入数据成功");
-                    mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,2000);
+                    mHandler.sendEmptyMessageDelayed(DISMISS_PROGRESS_DIALOG,1000);
                     mAct.finish();
                 }
             }

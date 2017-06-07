@@ -14,15 +14,18 @@ import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
 import com.wutao.lovecontack.R;
 import com.wutao.lovecontack.Utils.DialogUtils;
+import com.wutao.lovecontack.Utils.SharedPreferencesUtils;
 import com.wutao.lovecontack.Utils.ToastUtils;
 import com.wutao.lovecontack.auto.view.adapter.ContactItemListener;
 import com.wutao.lovecontack.auto.view.adapter.ContactsAdapter;
 import com.wutao.lovecontack.auto.view.adapter.DiffCallBack;
+import com.wutao.lovecontack.config.ConfigValue;
 import com.wutao.lovecontack.contract.ContactContract;
 import com.wutao.lovecontack.model.ContactBean;
 
@@ -48,9 +51,6 @@ public class ContackListFragment extends BaseFragment implements ContactContract
     private final int REQUESTCODE_CALL = 0xb2;
     private final int REQUESTCODE_READ_EXTERNAL = 0xb3;
     private final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL = 0xb4;
-    public static final String BIG_IMAGE = "big_image";
-    public static final String NORMAL_IMAGE = "normal_image";
-    public static final String SMALL_IMAGE = "small_image";
 
     public static final String ARGUMENT_TASK_ID = "ACTIVITY_ID";
     private List<ContactBean> mData = new ArrayList<>();
@@ -101,9 +101,14 @@ public class ContackListFragment extends BaseFragment implements ContactContract
 
     @Override
     protected void initView() {
-        mListAdapter = new ContactsAdapter(mAct,mItemListener,mData,contactDao,500,500);
-//        contactsRV.setLayoutManager(new GridLayoutManager(mAct,2));
-        contactsRV.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));//设置RecyclerView布局管理器为2列垂直排布
+        String showModel = SharedPreferencesUtils.getValue(mAct, ConfigValue.SHOW_MODEL);
+        if(TextUtils.isEmpty(showModel)){
+//            mListAdapter = new ContactsAdapter(mAct,mItemListener,mData,contactDao,500,500);
+//            contactsRV.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));//设置RecyclerView布局管理器为2列垂直排布
+            changeView(ConfigValue.NORMAL_IMAGE);
+        }else{
+            changeView(showModel);
+        }
         contactsRV.setItemAnimator(new DefaultItemAnimator());
         contactsRV.setAdapter(mListAdapter);
     }
@@ -251,17 +256,20 @@ public class ContackListFragment extends BaseFragment implements ContactContract
      */
     public void changeView(String viewTag){
         switch (viewTag){
-            case BIG_IMAGE:
+            case ConfigValue.BIG_IMAGE:
                 mListAdapter = new ContactsAdapter(mAct,mItemListener,mData,contactDao,1000,1000);
                 contactsRV.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
+                SharedPreferencesUtils.setValue(getActivity(),ConfigValue.SHOW_MODEL,ConfigValue.BIG_IMAGE);
                 break;
-            case NORMAL_IMAGE:
+            case ConfigValue.NORMAL_IMAGE:
                 mListAdapter = new ContactsAdapter(mAct,mItemListener,mData,contactDao,500,500);
                 contactsRV.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+                SharedPreferencesUtils.setValue(getActivity(),ConfigValue.SHOW_MODEL,ConfigValue.NORMAL_IMAGE);
                 break;
-            case SMALL_IMAGE:
+            case ConfigValue.SMALL_IMAGE:
                 mListAdapter = new ContactsAdapter(mAct,mItemListener,mData,contactDao,200,200);
                 contactsRV.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+                SharedPreferencesUtils.setValue(getActivity(),ConfigValue.SHOW_MODEL,ConfigValue.SMALL_IMAGE);
                 break;
         }
         contactsRV.setItemAnimator(new DefaultItemAnimator());

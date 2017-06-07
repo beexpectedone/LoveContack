@@ -67,20 +67,22 @@ public class ContactsRepository implements ContactDataSource{
     public void getContactsList(@NonNull final ContactDao contactDao, @NonNull final LoadContactsCallback callback,@NonNull final Activity context) {
 
         /** 这里要能将map转化成List集合 */
-//        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handle_thread",contactDao, ((MainActivity)context).mHandler,callback);
-//        saveDataHandlerThread.start();
-//        saveDataHandlerThread.getLooper();
-//        saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_CONTACT_LIST_INFO);
+        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handle_thread",contactDao, ((MainActivity)context).mHandler,callback);
+        saveDataHandlerThread.start();
+        saveDataHandlerThread.getLooper();
+        saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_CONTACT_LIST_INFO);
 
-        if(null != mCachedContacts && !dataChanged){ //数据没改变，从缓存中读取数据就可以
-            callback.onContactsLoaded(new ArrayList<>(mCachedContacts.values()));
-            return;
-        }
+//        if(null != mCachedContacts && !dataChanged){ //数据没改变，从缓存中读取数据就可以
+//            callback.onContactsLoaded(new ArrayList<>(mCachedContacts.values()));
+//            return;
+//        }
+//
+//        if(dataChanged){ //如果数据源已经改变，那么就需要从数据库中重新获取到数据
+//            /**这里做具体的获取数据库中数据的操作*/
+//            getContactsFromDataBaseDataSource(contactDao, callback, (MainActivity) context);
+//        }
 
-        if(dataChanged){ //如果数据源已经改变，那么就需要从数据库中重新获取到数据
-            /**这里做具体的获取数据库中数据的操作*/
-            getContactsFromDataBaseDataSource(contactDao, callback, (MainActivity) context);
-        }/*else {
+        /*else {
 
             mContactMemorySource.getContactsList(contactDao,new LoadContactsCallback() {
                 @Override
