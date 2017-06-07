@@ -2,12 +2,9 @@ package com.wutao.lovecontack.model.source;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
-import com.wutao.lovecontack.Utils.ThreadManager;
 import com.wutao.lovecontack.model.ContactBean;
-import com.wutao.lovecontack.model.source.function.SaveDataHandlerThread;
-import com.wutao.lovecontack.model.source.function.SaveDataThreadPool;
-import com.wutao.lovecontack.view.AddEditNewContactActivity;
 import com.wutao.lovecontack.view.MainActivity;
 
 import java.util.ArrayList;
@@ -67,20 +64,20 @@ public class ContactsRepository implements ContactDataSource{
     public void getContactsList(@NonNull final ContactDao contactDao, @NonNull final LoadContactsCallback callback,@NonNull final Activity context) {
 
         /** 这里要能将map转化成List集合 */
-        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handle_thread",contactDao, ((MainActivity)context).mHandler,callback);
-        saveDataHandlerThread.start();
-        saveDataHandlerThread.getLooper();
-        saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_CONTACT_LIST_INFO);
+//        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handle_thread",contactDao, ((MainActivity)context).mHandler,callback);
+//        saveDataHandlerThread.start();
+//        saveDataHandlerThread.getLooper();
+//        saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_CONTACT_LIST_INFO);
 
-//        if(null != mCachedContacts && !dataChanged){ //数据没改变，从缓存中读取数据就可以
-//            callback.onContactsLoaded(new ArrayList<>(mCachedContacts.values()));
-//            return;
-//        }
-//
-//        if(dataChanged){ //如果数据源已经改变，那么就需要从数据库中重新获取到数据
-//            /**这里做具体的获取数据库中数据的操作*/
-//            getContactsFromDataBaseDataSource(contactDao, callback, (MainActivity) context);
-//        }
+        if(null != mCachedContacts && !dataChanged){ //数据没改变，从缓存中读取数据就可以
+            callback.onContactsLoaded(new ArrayList<>(mCachedContacts.values()));
+            return;
+        }
+
+        if(dataChanged){ //如果数据源已经改变，那么就需要从数据库中重新获取到数据
+            /**这里做具体的获取数据库中数据的操作*/
+            getContactsFromDataBaseDataSource(contactDao, callback, (MainActivity) context);
+        }
 
         /*else {
 
@@ -102,12 +99,12 @@ public class ContactsRepository implements ContactDataSource{
 
     private void getContactsFromDataBaseDataSource(@NonNull ContactDao contactDao, @NonNull final LoadContactsCallback callback, @NonNull MainActivity context) {
         if(null != mContactDataBaseSource){
-            mContactDataBaseSource.getContactsList(contactDao,new LoadContactsCallback() {
+            mContactDataBaseSource.getContactsList(contactDao,new LoadContactsCallback() { /** 这个callback是为了更新缓存数据的 */
                 @Override
                 public void onContactsLoaded(List<ContactBean> contacts) {
                     refreshCache(contacts);
 //                refreshMemoryDataSource(contacts);
-                    callback.onContactsLoaded(new ArrayList<>(mCachedContacts.values()));
+                    callback.onContactsLoaded(new ArrayList<>(mCachedContacts.values())); /** 这里的callback是为了更新UI的 */
                 }
 
                 @Override
@@ -143,17 +140,35 @@ public class ContactsRepository implements ContactDataSource{
     }
 
     @Override
-    public void saveContact(@NonNull ContactDao contactDao, String photoPath, String name, String number1, double number2,@NonNull Activity context) {
+    public void saveContact(@NonNull ContactDao contactDao, final String photoPath, final String name, final String number1, final double number2,
+                            @NonNull Activity context, @NonNull final SaveCallback saveCallback) { /** 港真，这个callback没用 */
 
         /** 单独开启一条线程进行存储 */
 //        SaveDataThread saveDataThread = new SaveDataThread(contactDao,photoPath,name,number1,number2,context,((AddEditNewContactActivity)context).mHandler);
 //        saveDataThread.start();
 
-        /** 使用 线程池 的方式存储数据 */
-        SaveDataThreadPool saveDataThreadPool = new SaveDataThreadPool(contactDao,photoPath,name,number1,number2,context,((AddEditNewContactActivity)context).mHandler);
-        ThreadManager.getShortPool().execute(saveDataThreadPool);
+        if(null != mContactDataBaseSource){
+            mContactDataBaseSource.saveContact(contactDao, photoPath, name, number1, number2, context, new SaveCallback() { /** 这里的callback就是为了更新缓存数据的 */
+                @Override
+                public void saveSuccess() {
+                    if(null == mCachedContacts){
+                        mCachedContacts = new LinkedHashMap<>();
+                    }
+                    mCachedContacts.put(name,new ContactBean(name,number1,photoPath,number2));
+                }
 
-        String currentThread = Thread.currentThread().getName();
+                @Override
+                public void saveFailure() {
+
+                }
+            });
+        }
+
+        /** 使用 线程池 的方式存储数据 */
+//        SaveDataThreadPool saveDataThreadPool = new SaveDataThreadPool(contactDao,photoPath,name,number1,number2,context,((AddEditNewContactActivity)context).mHandler);
+//        ThreadManager.getShortPool().execute(saveDataThreadPool);
+//        String currentThread = Thread.currentThread().getName();
+
         /** 使用 Asynctask 类存储信息 */
 //        SaveDataAsyncTask saveDataAsyncTask = new SaveDataAsyncTask(contactDao,photoPath,((AddEditNewContactActivity)context).mHandler,context);
 //        ContactBean contactBean = new ContactBean(name,number1,photoPath,number2);
@@ -170,12 +185,29 @@ public class ContactsRepository implements ContactDataSource{
     }
 
     @Override
-    public void deleteContact(@NonNull final ContactDao contactDao, @NonNull final ContactBean contactBean, @NonNull final DeleteState deleteState,@NonNull Activity context) {
+    public void deleteContact(@NonNull final ContactDao contactDao, @NonNull final ContactBean contactBean, @NonNull final DeleteState deleteState,@NonNull Activity context,@NonNull DeleteCallback callback) {
+
+        if(null != mContactDataBaseSource){
+            mContactDataBaseSource.deleteContact(contactDao, contactBean, deleteState, context, new DeleteCallback() {
+                @Override
+                public void deleteSuccess() {
+                    if(null != mCachedContacts){ //删除后，缓存中的数据也要更新
+                        mCachedContacts.remove(contactBean.getName());
+                        Log.i("","");
+                    }
+                }
+
+                @Override
+                public void deleteFailure() {
+
+                }
+            });
+        }
         /** 实现删除任务的功能 */
-        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handler_thread",contactDao,contactBean, ((MainActivity)context).mHandler,deleteState);
-        saveDataHandlerThread.start();
-        saveDataHandlerThread.getLooper();
-        saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_DELETE_INFO);
+//        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handler_thread",contactDao,contactBean, ((MainActivity)context).mHandler,deleteState);
+//        saveDataHandlerThread.start();
+//        saveDataHandlerThread.getLooper();
+//        saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_DELETE_INFO);
     }
 
     @Override
@@ -205,6 +237,4 @@ public class ContactsRepository implements ContactDataSource{
     public void refreshContacts() {
         dataChanged = true;
     }
-
-
 }
