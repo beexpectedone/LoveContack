@@ -148,45 +148,44 @@ public class ContactsRepository implements ContactDataSource{
 //        saveDataThread.start();
 
         if(null != mContactDataBaseSource){
-            mContactDataBaseSource.saveContact(contactDao, photoPath, name, number1, number2, context, new SaveCallback() { /** 这里的callback就是为了更新缓存数据的 */
-                @Override
-                public void saveSuccess() {
-                    if(null == mCachedContacts){
-                        mCachedContacts = new LinkedHashMap<>();
-                    }
-                    mCachedContacts.put(name,new ContactBean(name,number1,photoPath,number2));
-                }
-
-                @Override
-                public void saveFailure() {
-
-                }
-            });
+//            mContactDataBaseSource.saveContact(contactDao, photoPath, name, number1, number2, context, new SaveCallback() { /** 这里的callback就是为了更新缓存数据的 */
+//                @Override
+//                public void saveSuccess() {
+//                    if(null == mCachedContacts){
+//                        mCachedContacts = new LinkedHashMap<>();
+//                    }
+//                    mCachedContacts.put(name,new ContactBean(name,number1,photoPath,number2));
+//                }
+//
+//                @Override
+//                public void saveFailure() {
+//
+//                }
+//            });
+            mContactDataBaseSource.saveContact(contactDao,photoPath,name,number1,number2,context,saveCallback);
         }
-
-        /** 使用 线程池 的方式存储数据 */
-//        SaveDataThreadPool saveDataThreadPool = new SaveDataThreadPool(contactDao,photoPath,name,number1,number2,context,((AddEditNewContactActivity)context).mHandler);
-//        ThreadManager.getShortPool().execute(saveDataThreadPool);
-//        String currentThread = Thread.currentThread().getName();
-
-        /** 使用 Asynctask 类存储信息 */
-//        SaveDataAsyncTask saveDataAsyncTask = new SaveDataAsyncTask(contactDao,photoPath,((AddEditNewContactActivity)context).mHandler,context);
-//        ContactBean contactBean = new ContactBean(name,number1,photoPath,number2);
-//        saveDataAsyncTask.execute(contactBean,null,null);
-
-        /** 使用 HandlerThread 进行存储 */
-//        ((AddEditNewContactActivity)context).mHandler = new ProgressDialogHandler(contactDao,photoPath,context,new ContactBean(name,number1,photoPath,number2));
-//        ((AddEditNewContactActivity)context).mHandler.sendEmptyMessage(ProgressDialogHandler.INSERT_DATA);
-//        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handler_thread",contactDao,photoPath,context,
-//                new ContactBean(name,number1,photoPath,number2),((AddEditNewContactActivity)context).mHandler);
-//        saveDataHandlerThread.start();
-//        saveDataHandlerThread.getLooper();
-//        saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_SAVE_INFO);
     }
 
     @Override
-    public void deleteContact(@NonNull final ContactDao contactDao, @NonNull final ContactBean contactBean, @NonNull final DeleteState deleteState,@NonNull Activity context,@NonNull DeleteCallback callback) {
+    public void saveContact(@NonNull ContactDao contactDao, final String photoPath, final String name, final String number1, final double number2, @NonNull Activity context) {
+        saveContact(contactDao,photoPath,name,number1,number2,context,new SaveCallback() { /** 这里的callback就是为了更新缓存数据的 */
+        @Override
+        public void saveSuccess() {
+            if(null == mCachedContacts){
+                mCachedContacts = new LinkedHashMap<>();
+            }
+            mCachedContacts.put(name,new ContactBean(name,number1,photoPath,number2));
+        }
 
+            @Override
+            public void saveFailure() {
+
+            }
+        });
+    }
+
+    @Override
+    public void deleteContact(@NonNull ContactDao contactDao, @NonNull final ContactBean contactBean, @NonNull DeleteState deleteState, @NonNull Activity context) {
         if(null != mContactDataBaseSource){
             mContactDataBaseSource.deleteContact(contactDao, contactBean, deleteState, context, new DeleteCallback() {
                 @Override
@@ -202,6 +201,14 @@ public class ContactsRepository implements ContactDataSource{
 
                 }
             });
+        }
+    }
+
+    @Override
+    public void deleteContact(@NonNull final ContactDao contactDao, @NonNull final ContactBean contactBean, @NonNull final DeleteState deleteState,@NonNull Activity context,@NonNull DeleteCallback callback) {
+
+        if(null != mContactDataBaseSource){
+            mContactDataBaseSource.deleteContact(contactDao,contactBean,deleteState,context,callback);
         }
         /** 实现删除任务的功能 */
 //        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handler_thread",contactDao,contactBean, ((MainActivity)context).mHandler,deleteState);

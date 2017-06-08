@@ -44,6 +44,16 @@ public class ContactsMemoryDataSource implements ContactDataSource {
 
     }
 
+    @Override
+    public void saveContact(@NonNull ContactDao contactDao, String photoPath, String name, String number1, double number2, @NonNull Activity context) {
+
+    }
+
+    @Override
+    public void deleteContact(@NonNull ContactDao contactDao, @NonNull ContactBean contactBean, @NonNull DeleteState deleteState, @NonNull Activity context) {
+
+    }
+
 
     @Override
     public void deleteContact(@NonNull ContactDao contactDao, @NonNull ContactBean contactBean, @NonNull DeleteState deleteState, @NonNull Activity context,@NonNull DeleteCallback callback) {

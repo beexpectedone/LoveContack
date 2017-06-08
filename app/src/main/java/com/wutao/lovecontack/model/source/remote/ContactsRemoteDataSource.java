@@ -66,6 +66,30 @@ public class ContactsRemoteDataSource implements ContactDataSource {
         SaveDataThreadPool saveDataThreadPool = new SaveDataThreadPool(contactDao,photoPath,name,number1,
                 number2,context,((AddEditNewContactActivity)context).mHandler, saveCallback);
         ThreadManager.getShortPool().execute(saveDataThreadPool);
+
+        /** 使用 Asynctask 类存储信息 */
+//        SaveDataAsyncTask saveDataAsyncTask = new SaveDataAsyncTask(contactDao,photoPath,((AddEditNewContactActivity)context).mHandler,context);
+//        ContactBean contactBean = new ContactBean(name,number1,photoPath,number2);
+//        saveDataAsyncTask.execute(contactBean,null,null);
+
+        /** 使用 HandlerThread 进行存储 */
+//        ((AddEditNewContactActivity)context).mHandler = new ProgressDialogHandler(contactDao,photoPath,context,new ContactBean(name,number1,photoPath,number2));
+//        ((AddEditNewContactActivity)context).mHandler.sendEmptyMessage(ProgressDialogHandler.INSERT_DATA);
+//        SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handler_thread",contactDao,photoPath,context,
+//                new ContactBean(name,number1,photoPath,number2),((AddEditNewContactActivity)context).mHandler);
+//        saveDataHandlerThread.start();
+//        saveDataHandlerThread.getLooper();
+//        saveDataHandlerThread.saveDataHandler.sendEmptyMessage(SaveDataHandlerThread.MSG_SAVE_INFO);
+    }
+
+    @Override
+    public void saveContact(@NonNull ContactDao contactDao, String photoPath, String name, String number1, double number2, @NonNull Activity context) {
+
+    }
+
+    @Override
+    public void deleteContact(@NonNull ContactDao contactDao, @NonNull ContactBean contactBean, @NonNull DeleteState deleteState, @NonNull Activity context) {
+
     }
 
     @Override

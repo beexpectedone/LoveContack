@@ -51,6 +51,10 @@ public interface ContactDataSource {
 
     void saveContact(@NonNull ContactDao contactDao, String photoPath, String name, String number1, double number2,@NonNull Activity context, @NonNull SaveCallback callback);
 
+    void saveContact(@NonNull ContactDao contactDao, String photoPath, String name, String number1, double number2,@NonNull Activity context);
+
+    void deleteContact(@NonNull ContactDao contactDao,@NonNull ContactBean contactBean, @NonNull DeleteState deleteState,@NonNull Activity context);
+
     void deleteContact(@NonNull ContactDao contactDao,@NonNull ContactBean contactBean, @NonNull DeleteState deleteState,@NonNull Activity context,@NonNull DeleteCallback callback);
 
     void deleteAllContacts();
