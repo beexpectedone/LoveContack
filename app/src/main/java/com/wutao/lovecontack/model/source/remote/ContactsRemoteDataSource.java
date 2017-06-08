@@ -39,14 +39,12 @@ public class ContactsRemoteDataSource implements ContactDataSource {
         if(null == INSTANCE){
             INSTANCE = new ContactsRemoteDataSource();
         }
-
         return INSTANCE;
     }
 
 
     @Override
     public void getContactsList(@NonNull ContactDao contactDao, @NonNull LoadContactsCallback callback, @NonNull Activity context) {
-
         /** 这里要能将map转化成List集合 */
         SaveDataHandlerThread saveDataHandlerThread = new SaveDataHandlerThread("handle_thread",contactDao, ((MainActivity)context).mHandler,callback);
         saveDataHandlerThread.start();

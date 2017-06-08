@@ -32,5 +32,6 @@ public class GreenDaoGenerator {
         contact.addDoubleProperty("numbertwo");// 联系人第二个电话
         contact.addStringProperty("photoPath").notNull();
         contact.addDateProperty("date");
+        contact.addBooleanProperty("good");
     }
 }

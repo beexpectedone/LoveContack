@@ -15,6 +15,7 @@ public class Contact {
     /** Not-null value. */
     private String photoPath;
     private java.util.Date date;
+    private Boolean good;
 
     public Contact() {
     }
@@ -23,13 +24,14 @@ public class Contact {
         this.id = id;
     }
 
-    public Contact(Long id, String name, String number, Double numbertwo, String photoPath, java.util.Date date) {
+    public Contact(Long id, String name, String number, Double numbertwo, String photoPath, java.util.Date date, Boolean good) {
         this.id = id;
         this.name = name;
         this.number = number;
         this.numbertwo = numbertwo;
         this.photoPath = photoPath;
         this.date = date;
+        this.good = good;
     }
 
     public Long getId() {
@@ -84,6 +86,14 @@ public class Contact {
 
     public void setDate(java.util.Date date) {
         this.date = date;
+    }
+
+    public Boolean getGood() {
+        return good;
+    }
+
+    public void setGood(Boolean good) {
+        this.good = good;
     }
 
 }
