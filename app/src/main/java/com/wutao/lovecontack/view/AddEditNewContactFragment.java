@@ -241,6 +241,7 @@ public class AddEditNewContactFragment extends BaseFragment implements AddEditCo
             if (null != uriImg) {
                 mPhotoPath = BitmapUtils.getRealPathFromURI(uriImg, getContext());
                 bitmap = BitmapUtils.getSmallBitmap(mPhotoPath, 480, 800);
+                bitmap = BitmapUtils.createWatermark(mAct,bitmap,"打个水印",0);
                 if (null != bitmap) {
                     contactIM.setImageBitmap(bitmap);
                 }
