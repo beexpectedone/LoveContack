@@ -1,6 +1,8 @@
 package com.wutao.lovecontack.view;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -32,13 +34,18 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
     private int code;
     private AdvertiseBean advertiseBean;
 
+    PackageManager mP;
+    ComponentName def;
+    ComponentName mBazaar;
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.scrip_tv:
-                Intent intent = new Intent();
-                intent.setClass(AdvertiseActivity.this, MainActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent();
+//                intent.setClass(AdvertiseActivity.this, MainActivity.class);
+//                startActivity(intent);
+                setIconSc();
                 AdvertiseActivity.this.finish();
                 break;
             case R.id.advertise_iv:
@@ -54,9 +61,30 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_advertise);
         initView();
+        initIcon();
     }
 
+    private void initIcon() {
+        mP = getApplicationContext().getPackageManager();
+        def = new ComponentName(getBaseContext(),"com.wutao.lovecontack.view.AdvertiseActivity");
+        mBazaar= new ComponentName(getBaseContext(),"com.wutao.lovecontack.icon");
+    }
 
+    //执行此方法改变图标
+    private void setIconSc() {
+        disableComponent(def); //禁用之前的图标
+        enabledComponent(mBazaar);}
+
+    private void setIconWm() {
+        disableComponent(mBazaar);
+        enabledComponent(def);}//显示快捷图标
+
+    private void enabledComponent(ComponentName name) {
+        mP.setComponentEnabledSetting(name, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+    }
+    private void disableComponent(ComponentName name) {
+        mP.setComponentEnabledSetting(name, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+    }
 
     public void initView() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -71,7 +99,7 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
     private AdvertiseBean initBackGroundImage() {
         advertiseBean = new AdvertiseBean();
         advertiseBean.setCode(1);
-        advertiseBean.setTime(3 * 1000);
+        advertiseBean.setTime(4 * 1000);
         return advertiseBean;
     }
 

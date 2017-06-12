@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">爱联系</string>
+    <string name="app_name2">爱联系2</string>
     <string name="action_big_image">大图</string>
     <string name="action_normal_image">中等图</string>
     <string name="action_smal_image">小图</string>

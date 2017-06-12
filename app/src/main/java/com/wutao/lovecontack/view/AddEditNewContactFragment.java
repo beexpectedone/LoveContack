@@ -241,7 +241,7 @@ public class AddEditNewContactFragment extends BaseFragment implements AddEditCo
             if (null != uriImg) {
                 mPhotoPath = BitmapUtils.getRealPathFromURI(uriImg, getContext());
                 bitmap = BitmapUtils.getSmallBitmap(mPhotoPath, 480, 800);
-                bitmap = BitmapUtils.createWatermark(mAct,bitmap,"打个水印",0);
+//                bitmap = BitmapUtils.createWatermark(mAct,bitmap,"打个水印",0);
                 if (null != bitmap) {
                     contactIM.setImageBitmap(bitmap);
                 }
@@ -259,8 +259,7 @@ public class AddEditNewContactFragment extends BaseFragment implements AddEditCo
             case MY_PERMISSIONS_REQUEST_READ_CONTACTS:
                 if (null != grantResults && grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startActivityForResult(new Intent(
-                            Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUESTCODE_READ_CONTACTS);
+                    startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUESTCODE_READ_CONTACTS);
                 }
                 break;
         }
