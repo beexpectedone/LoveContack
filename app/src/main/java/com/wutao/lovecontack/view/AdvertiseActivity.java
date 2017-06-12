@@ -42,10 +42,9 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.scrip_tv:
-//                Intent intent = new Intent();
-//                intent.setClass(AdvertiseActivity.this, MainActivity.class);
-//                startActivity(intent);
-                setIconSc();
+                Intent intent = new Intent();
+                intent.setClass(AdvertiseActivity.this, MainActivity.class);
+                startActivity(intent);
                 AdvertiseActivity.this.finish();
                 break;
             case R.id.advertise_iv:
@@ -91,7 +90,7 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
         ButterKnife.bind(this);
         scripTV.setOnClickListener(this);
         advertiseIV.setOnClickListener(this);
-        timeCount = new TimeCount(4000,1000);
+        timeCount = new TimeCount(2000,1000);
         timeCount.start();
         getImageAndHandle(initBackGroundImage());
     }
@@ -99,7 +98,7 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
     private AdvertiseBean initBackGroundImage() {
         advertiseBean = new AdvertiseBean();
         advertiseBean.setCode(1);
-        advertiseBean.setTime(4 * 1000);
+        advertiseBean.setTime(2 * 1000);
         return advertiseBean;
     }
 
