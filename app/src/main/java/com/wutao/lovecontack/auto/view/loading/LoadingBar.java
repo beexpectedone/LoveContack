@@ -6,6 +6,9 @@ import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by mingyue on 2017/6/1.
  */
@@ -15,6 +18,7 @@ public class LoadingBar implements IloadingBar{
     private ViewGroup mParent;
     private View mView;
     private OnLoadingBarListener mListener;
+    private static final Map<View, LoadingBar> LOADINGBARS = new HashMap<>(); //父节点为key， LoadingBar为value值。
 
     private LoadingBar(ViewGroup parent, LoadingFactory factory) {
         mParent = parent;
@@ -33,6 +37,27 @@ public class LoadingBar implements IloadingBar{
             }
             mParent.addView(mView);
         }
+    }
+
+    public static LoadingBar make(View parent) {
+        return make(parent, LoadingConfig.getLoadingFactory());
+    }
+
+    /**
+     *
+     * @param parent
+     * @param factory
+     * @return
+     */
+    public static LoadingBar make(View parent, LoadingFactory factory) {
+        //如果已经有Loading在显示了
+        if (LOADINGBARS.containsKey(parent)) {
+            LoadingBar loadingBar = LOADINGBARS.get(parent);
+            loadingBar.mParent.removeView(loadingBar.mView);
+        }
+        LoadingBar newLoadingBar = new LoadingBar(findSuitableParent(parent), factory);
+        LOADINGBARS.put(parent, newLoadingBar);
+        return newLoadingBar;
     }
 
     /**
