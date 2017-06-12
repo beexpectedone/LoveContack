@@ -56,8 +56,6 @@ public class DataBaseUtils {
         return contactBeanList;
     }
 
-
-
     public static void insert(ContactDao contactDao, String photoPath, String name, String number1, double number2, Activity context){
         /**这里做具体的保存联系人的操作*/
 //        mContactLocalSource.saveContact(contactBean);
