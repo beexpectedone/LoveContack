@@ -3,14 +3,19 @@ package com.wutao.lovecontack.view;
 import android.content.Intent;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.wutao.lovecontack.R;
 import com.wutao.lovecontack.Utils.ActivityUtils;
 import com.wutao.lovecontack.Utils.SharedPreferencesUtils;
+import com.wutao.lovecontack.auto.view.loading.LoadingBar;
+import com.wutao.lovecontack.auto.view.loading.LoadingConfig;
+import com.wutao.lovecontack.auto.view.loading.LoadingFactory;
 import com.wutao.lovecontack.config.ConfigValue;
 import com.wutao.lovecontack.model.source.Injection;
 import com.wutao.lovecontack.presenter.ContactPresenter;
@@ -50,7 +55,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         }
         new ContactPresenter(contackListFragment, Injection.provideContactsRepository(this),contackListFragment.contactDao,this);
 
+        LoadingBar.make(rootViewCL);
+        initLoadingBar();
 //        new ContactPresenter(contackListFragment, new ContactsRepository(),contackListFragment.contactDao,this);
+    }
+
+    private void initLoadingBar() {
+        LoadingConfig.setFactory(new LoadingFactory() {
+            @Override
+            public View onCreateView(ViewGroup parent) {
+                return LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_progressbar_vertical_material, parent, false);
+            }
+        });
     }
 
     @Override

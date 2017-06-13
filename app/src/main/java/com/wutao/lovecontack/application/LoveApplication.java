@@ -33,7 +33,10 @@ public class LoveApplication extends Application {
         initRecovery();
         initDataBase();
         initDir();
+
     }
+
+
 
     /**
      * 初始化项目的文件夹
