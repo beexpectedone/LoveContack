@@ -32,6 +32,7 @@ import com.wutao.lovecontack.contract.AddEditContactContract;
 import com.wutao.lovecontack.model.ContactBean;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -88,6 +89,7 @@ public class AddEditNewContactFragment extends BaseFragment implements AddEditCo
 
     @Override
     protected void initView() {
+        ButterKnife.bind(mAct);
         selectTV.setOnClickListener(this);
         getPhotoTV.setOnClickListener(this);
     }
@@ -123,7 +125,6 @@ public class AddEditNewContactFragment extends BaseFragment implements AddEditCo
         if (!TextUtils.isEmpty(mNumber)) {
             contactBean.setName(mNumber);
         }
-
     }
 
     public void setmPhotoPath(ContactBean contactBean) {
@@ -150,9 +151,7 @@ public class AddEditNewContactFragment extends BaseFragment implements AddEditCo
 
     @Override
     public void setLoadingIndicator(boolean active) {
-
     }
-
 
     @Override
     public void setPresenter(AddEditContactContract.Presenter presenter) {

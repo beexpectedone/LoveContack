@@ -22,7 +22,7 @@ public class LoadingBar implements IloadingBar{
 
     private LoadingBar(ViewGroup parent, LoadingFactory factory) {
         mParent = parent;
-        mView = factory.onCreateView(mParent);
+        mView = factory.onCreateView(mParent);//这里将ViewGroup这个parent赋值给到factory
     }
 
     /**
@@ -40,7 +40,7 @@ public class LoadingBar implements IloadingBar{
     }
 
     public static LoadingBar make(View parent) {
-        return make(parent, LoadingConfig.getLoadingFactory());
+        return make(parent, LoadingConfig.getLoadingFactory()); //如果没有传递Factory对象进来就用默认的Material样式。
     }
 
     /**
@@ -56,7 +56,7 @@ public class LoadingBar implements IloadingBar{
             loadingBar.mParent.removeView(loadingBar.mView);
         }
         LoadingBar newLoadingBar = new LoadingBar(findSuitableParent(parent), factory);
-        LOADINGBARS.put(parent, newLoadingBar);
+        LOADINGBARS.put(parent, newLoadingBar); //
         return newLoadingBar;
     }
 

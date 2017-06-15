@@ -29,11 +29,9 @@ public class LoveApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mApplication = this;
-
         initRecovery();
         initDataBase();
         initDir();
-
     }
 
 
