@@ -5,7 +5,7 @@ package com.wutao.lovecontack.auto.view.loading;
  */
 
 public class LoadingConfig {
-    private final static LoadingFactory DEFAULT_LOADING_FACTORY = new MaterialFactory();
+    private final static LoadingFactory DEFAULT_LOADING_FACTORY = new MaterialFactory(); //会在加载类的时候将其加载到内存中
 
     private static LoadingFactory mLoadingFactory = DEFAULT_LOADING_FACTORY;
 

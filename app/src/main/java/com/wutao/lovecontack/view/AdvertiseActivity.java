@@ -48,10 +48,10 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
                 AdvertiseActivity.this.finish();
                 break;
             case R.id.advertise_iv:
-                Intent intent2 = new Intent();
-                intent2.setClass(this,MainActivity.class);
-                startActivity(intent2);
-                this.finish();
+//                Intent intent2 = new Intent();
+//                intent2.setClass(this,MainActivity.class);
+//                startActivity(intent2);
+//                this.finish();
                 break;
         }
     }

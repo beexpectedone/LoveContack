@@ -54,7 +54,7 @@ public class AddEditNewContactActivity extends BaseActivity {
 
         }
         new AddEditContactPresenter(taskId, Injection.provideContactsRepository(this), addEditNewContactFragment);
-        LoadingBar.make(rootViewLL).show();
+//        LoadingBar.make(rootViewLL).show();
 //        initLoadingBar();
     }
 
